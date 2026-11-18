@@ -96,6 +96,7 @@
     .field input { width: 100%; height: 43px; padding: 0 12px; border: 1px solid #41463f; border-radius: 8px; background: #121412; color: #fff; }
     .field input::placeholder { color: #777d74; }
     .form-error { min-height: 18px; margin: 0 0 10px; color: #ff9a91; font-size: 12px; }
+    .form-status { min-height: 18px; margin: 0 0 10px; color: var(--muted); font-size: 12px; }
     .dialog-actions { display: flex; justify-content: flex-end; gap: 10px; }
     .secondary-button { min-height: 40px; padding: 0 15px; border: 1px solid #41463f; border-radius: 999px; background: transparent; color: #e6e8e3; cursor: pointer; }
 
@@ -178,19 +179,20 @@
       <div class="dialog-heading">
         <div>
           <h2 id="dialog-title">Añadir a tu biblioteca</h2>
-          <p>Pega un enlace de YouTube o YouTube Music y ponle un nombre fácil de reconocer.</p>
+          <p>Pega un enlace de YouTube o YouTube Music. Si dejas el título vacío, intentaremos importarlo de sus metadatos.</p>
         </div>
         <button class="close-button" id="close-dialog" type="button" aria-label="Cerrar">×</button>
       </div>
       <div class="field">
-        <label for="track-title">Título</label>
-        <input id="track-title" name="title" maxlength="100" placeholder="Por ejemplo, Mi canción favorita" required>
+        <label for="track-title">Título (opcional)</label>
+        <input id="track-title" name="title" maxlength="100" placeholder="Se importará desde YouTube si lo dejas vacío">
       </div>
       <div class="field">
         <label for="track-url">Enlace de YouTube Music o YouTube</label>
-        <input id="track-url" name="url" type="url" inputmode="url" placeholder="https://music.youtube.com/watch?v=..." required>
+        <input id="track-url" name="url" type="url" inputmode="url" placeholder="https://music.youtube.com/playlist?list=..." required>
       </div>
       <p class="form-error" id="form-error" role="alert"></p>
+      <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
       <div class="dialog-actions">
         <button class="secondary-button" id="cancel-dialog" type="button">Cancelar</button>
         <button class="add-button" type="submit">Guardar enlace</button>
@@ -220,7 +222,10 @@
           typeof track.id === "string" &&
           typeof track.title === "string" &&
           typeof track.url === "string" &&
-          typeof track.videoId === "string"
+          (
+            (typeof track.videoId === "string" && /^[A-Za-z0-9_-]{11}$/.test(track.videoId)) ||
+            (typeof track.playlistId === "string" && /^[A-Za-z0-9_-]{1,200}$/.test(track.playlistId))
+          )
         );
       } catch (error) {
         noticeElement.textContent = "No se pudo leer la biblioteca guardada. Puedes seguir usando la página, pero quizá no se conserven tus cambios.";
@@ -240,7 +245,7 @@
       }
     }
 
-    function getVideoId(value) {
+    function getYouTubeTarget(value) {
       let url;
       try {
         url = new URL(value);
@@ -250,6 +255,13 @@
 
       const host = url.hostname.toLowerCase().replace(/^www\./, "");
       if (url.protocol !== "https:" || !["youtube.com", "music.youtube.com", "youtu.be"].includes(host)) return null;
+
+      const playlistId = url.searchParams.get("list") || "";
+      const validPlaylistId = /^[A-Za-z0-9_-]{1,200}$/.test(playlistId);
+
+      if (host !== "youtu.be" && (url.pathname === "/playlist" || url.pathname === "/embed/videoseries")) {
+        return validPlaylistId ? { playlistId } : null;
+      }
 
       let videoId = "";
       if (host === "youtu.be") {
@@ -261,7 +273,21 @@
         if (["embed", "shorts", "live"].includes(parts[0])) videoId = parts[1] || "";
       }
 
-      return /^[A-Za-z0-9_-]{11}$/.test(videoId) ? videoId : null;
+      if (/^[A-Za-z0-9_-]{11}$/.test(videoId)) return { videoId };
+      return validPlaylistId ? { playlistId } : null;
+    }
+
+    async function getYouTubeTitle(value) {
+      const endpoint = new URL("https://www.youtube.com/oembed");
+      endpoint.searchParams.set("url", value);
+      endpoint.searchParams.set("format", "json");
+      const response = await fetch(endpoint);
+      if (!response.ok) throw new Error(`YouTube respondió con el estado ${response.status}.`);
+      const metadata = await response.json();
+      if (!metadata || typeof metadata.title !== "string" || !metadata.title.trim()) {
+        throw new Error("YouTube no devolvió un título para este enlace.");
+      }
+      return metadata.title.trim();
     }
 
     function render() {
@@ -334,7 +360,9 @@
       const message = document.querySelector("#player-message");
       const frame = document.createElement("iframe");
       frame.title = `Reproductor de YouTube: ${track.title}`;
-      frame.src = `https://www.youtube.com/embed/${encodeURIComponent(track.videoId)}?autoplay=1&rel=0`;
+      frame.src = track.playlistId
+        ? `https://www.youtube.com/embed/videoseries?list=${encodeURIComponent(track.playlistId)}&autoplay=1&rel=0`
+        : `https://www.youtube.com/embed/${encodeURIComponent(track.videoId)}?autoplay=1&rel=0`;
       frame.allow = "autoplay; encrypted-media; picture-in-picture";
       frame.referrerPolicy = "strict-origin-when-cross-origin";
       frame.allowFullscreen = true;
@@ -366,8 +394,9 @@
 
     document.querySelector("#open-dialog").addEventListener("click", () => {
       document.querySelector("#form-error").textContent = "";
+      document.querySelector("#form-status").textContent = "";
       dialog.showModal();
-      document.querySelector("#track-title").focus();
+      document.querySelector("#track-url").focus();
     });
     document.querySelector("#close-dialog").addEventListener("click", () => dialog.close());
     document.querySelector("#cancel-dialog").addEventListener("click", () => dialog.close());
@@ -375,27 +404,49 @@
       if (event.target === dialog) dialog.close();
     });
     searchInput.addEventListener("input", render);
-    form.addEventListener("submit", (event) => {
+    form.addEventListener("submit", async (event) => {
       event.preventDefault();
-      const title = document.querySelector("#track-title").value.trim();
+      const titleInput = document.querySelector("#track-title");
+      const submitButton = form.querySelector('button[type="submit"]');
+      const formError = document.querySelector("#form-error");
+      const formStatus = document.querySelector("#form-status");
+      let title = titleInput.value.trim();
       const url = document.querySelector("#track-url").value.trim();
-      const videoId = getVideoId(url);
-      if (!videoId) {
-        document.querySelector("#form-error").textContent = "Pega un enlace HTTPS válido de YouTube o YouTube Music a un vídeo.";
+      const target = getYouTubeTarget(url);
+      if (!target) {
+        formError.textContent = "Pega un enlace HTTPS válido de un vídeo o una playlist de YouTube o YouTube Music.";
         return;
       }
-      const track = {
-        id: typeof crypto.randomUUID === "function" ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`,
-        title,
-        url,
-        videoId
-      };
-      tracks.unshift(track);
-      const saved = saveTracks();
-      form.reset();
-      dialog.close();
-      if (saved) noticeElement.textContent = "Enlace añadido a tu biblioteca.";
-      render();
+
+      formError.textContent = "";
+      submitButton.disabled = true;
+      try {
+        if (!title) {
+          formStatus.textContent = "Obteniendo el título desde YouTube…";
+          try {
+            title = await getYouTubeTitle(url);
+          } catch (error) {
+            formError.textContent = "No se pudieron obtener los metadatos de YouTube. Puedes volver a intentarlo o escribir un título manualmente.";
+            console.error("No se pudieron obtener los metadatos de YouTube:", error);
+            return;
+          }
+        }
+        const track = {
+          id: typeof crypto.randomUUID === "function" ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+          title,
+          url,
+          ...target
+        };
+        tracks.unshift(track);
+        const saved = saveTracks();
+        form.reset();
+        dialog.close();
+        if (saved) noticeElement.textContent = "Enlace añadido a tu biblioteca.";
+        render();
+      } finally {
+        formStatus.textContent = "";
+        submitButton.disabled = false;
+      }
     });
 
     render();
