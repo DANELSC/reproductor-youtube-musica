@@ -2,8 +2,13 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#101110">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
   <title>Ritmo — tu biblioteca musical</title>
   <style>
     :root {
@@ -34,16 +39,20 @@
     .brand { display: flex; align-items: center; gap: 11px; margin: 0 0 36px 8px; font-size: 19px; font-weight: 750; letter-spacing: -.5px; }
     .brand-mark { display: grid; width: 31px; height: 31px; place-items: center; border-radius: 10px; background: var(--accent); color: #171a13; }
     .nav-label { margin: 0 0 12px 10px; color: #777c75; font-size: 11px; font-weight: 700; letter-spacing: 1.3px; text-transform: uppercase; }
-    .nav-item { display: flex; width: 100%; align-items: center; gap: 12px; padding: 12px 11px; border: 0; border-radius: 9px; background: transparent; color: #d7d9d4; text-align: left; }
+    .nav-item { display: flex; width: 100%; align-items: center; gap: 12px; padding: 12px 11px; border: 0; border-radius: 9px; background: transparent; color: #d7d9d4; text-align: left; cursor: pointer; }
     .nav-item.active { background: #282b27; color: var(--accent); }
     .nav-item span:first-child { width: 19px; color: inherit; text-align: center; }
-    .sidebar-note { margin: 30px 9px 0; color: #898d86; font-size: 12px; line-height: 1.6; }
+    .nav-count { margin-left: auto; color: #898d86; font-size: 11px; }
+    .sidebar-note { max-width: 190px; margin: 30px 9px 0; color: #898d86; font-size: 12px; line-height: 1.6; }
 
     main { width: min(1120px, 100%); margin: 0 auto; padding: 27px clamp(20px, 5vw, 64px) 48px; }
     .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 43px; }
     .search-wrap { display: flex; width: min(440px, 100%); align-items: center; gap: 10px; padding: 0 15px; border: 1px solid #343834; border-radius: 999px; background: #1b1e1b; color: var(--muted); }
     .search-wrap input { width: 100%; height: 43px; border: 0; outline: 0; background: transparent; color: #fff; }
     .search-wrap input::placeholder { color: #969a93; }
+    .topbar-actions { display: flex; align-items: center; gap: 9px; }
+    .utility-button { display: inline-flex; min-height: 42px; align-items: center; justify-content: center; gap: 8px; padding: 0 14px; border: 1px solid #41463f; border-radius: 999px; background: #1b1e1b; color: #e6e8e3; font-weight: 650; cursor: pointer; white-space: nowrap; }
+    .utility-button:hover { background: #292d29; }
     .add-button { display: inline-flex; min-height: 42px; align-items: center; justify-content: center; gap: 8px; padding: 0 17px; border: 0; border-radius: 999px; background: var(--accent); color: #1a2012; font-weight: 750; cursor: pointer; white-space: nowrap; }
     .add-button:hover { background: #d3ff81; }
 
@@ -58,6 +67,9 @@
     .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin: 38px 0 16px; }
     .section-heading h2 { margin: 0; font-size: 20px; letter-spacing: -.4px; }
     .track-count { color: var(--muted); font-size: 13px; }
+    .library-tools { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 14px; }
+    .library-tools label { display: grid; gap: 5px; color: #a4a7a1; font-size: 11px; }
+    .library-tools select, .field select { min-width: 180px; height: 38px; padding: 0 10px; border: 1px solid #41463f; border-radius: 8px; background: #191c19; color: #f5f5f2; }
     .track-list { overflow: hidden; border: 1px solid #2b2e2b; border-radius: 13px; background: #171917; }
     .track-row { display: grid; grid-template-columns: 44px minmax(0, 1fr) 42px; align-items: center; gap: 13px; min-height: 72px; padding: 10px 15px; border-bottom: 1px solid #2a2d2a; }
     .track-row:last-child { border-bottom: 0; }
@@ -66,6 +78,7 @@
     .track-info { min-width: 0; }
     .track-title { overflow: hidden; margin: 0 0 5px; font-size: 14px; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
     .track-link { overflow: hidden; margin: 0; color: #989d95; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+    .track-meta { overflow: hidden; margin: 0 0 5px; color: #b7c49f; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
     .row-actions { display: flex; justify-content: flex-end; gap: 4px; }
     .icon-button { display: grid; width: 36px; height: 36px; place-items: center; border: 0; border-radius: 50%; background: transparent; color: #b6bab3; cursor: pointer; }
     .icon-button:hover { background: #343834; color: #fff; }
@@ -76,14 +89,25 @@
     .notice { min-height: 20px; margin: 13px 2px 0; color: #b5c69b; font-size: 12px; }
 
     .player { position: fixed; z-index: 3; right: 0; bottom: 0; left: 0; display: grid; grid-template-columns: minmax(160px, 1fr) minmax(300px, 1.3fr) minmax(160px, 1fr); align-items: center; gap: 20px; min-height: 88px; padding: 12px 25px; border-top: 1px solid #333733; background: #171917f5; backdrop-filter: blur(14px); }
-    .now-playing { display: flex; min-width: 0; align-items: center; gap: 12px; }
+    .now-playing { display: flex; min-width: 0; align-items: center; gap: 12px; padding: 0; border: 0; background: transparent; color: inherit; text-align: left; cursor: pointer; }
     .now-playing .cover { flex: 0 0 46px; width: 46px; height: 46px; }
     .now-title { overflow: hidden; margin: 0 0 5px; font-size: 13px; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
     .now-subtitle { margin: 0; color: var(--muted); font-size: 11px; }
     .player-message { color: #a8aca5; font-size: 12px; text-align: center; }
     .player-actions { display: flex; justify-content: flex-end; }
+    .player-message iframe { display: block; width: 100%; height: 64px; border: 0; border-radius: 8px; background: #101110; }
     .open-youtube { display: inline-flex; min-height: 38px; align-items: center; padding: 0 13px; border: 1px solid #41463f; border-radius: 999px; color: #e6e8e3; font-size: 12px; text-decoration: none; white-space: nowrap; }
     .open-youtube:hover { background: #292d29; }
+    .collapse-player { display: none; }
+    .player.expanded { z-index: 8; inset: 0; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto auto; align-content: center; gap: 28px; padding: clamp(24px, 7vw, 90px); border: 0; border-radius: 0; background: radial-gradient(ellipse at 50% 15%, #35432b, #101110 65%); }
+    .player.expanded .now-playing { flex-direction: column; justify-content: center; text-align: center; }
+    .player.expanded .now-playing .cover { flex: 0 0 auto; width: clamp(150px, 31vw, 250px); height: clamp(150px, 31vw, 250px); border-radius: 22px; font-size: clamp(48px, 10vw, 82px); box-shadow: 0 22px 70px #0008; }
+    .player.expanded .now-title { max-width: min(640px, 88vw); margin-top: 25px; font-size: clamp(22px, 4vw, 32px); }
+    .player.expanded .now-subtitle { font-size: 14px; }
+    .player.expanded .player-message { width: min(600px, 100%); margin: 0 auto; }
+    .player.expanded .player-message iframe { height: min(210px, 30vh); border-radius: 12px; }
+    .player.expanded .player-actions { justify-content: center; }
+    .player.expanded .collapse-player { position: fixed; top: max(18px, env(safe-area-inset-top)); right: max(18px, env(safe-area-inset-right)); z-index: 1; display: grid; width: 44px; height: 44px; border: 1px solid #ffffff33; background: #111a; color: #fff; font-size: 22px; }
     dialog { width: min(450px, calc(100% - 32px)); padding: 0; border: 1px solid #41463f; border-radius: 16px; background: #1b1e1b; color: #f5f5f2; box-shadow: 0 24px 80px #0009; }
     dialog::backdrop { background: #090a09bb; backdrop-filter: blur(4px); }
     .dialog-content { padding: 25px; }
@@ -95,32 +119,58 @@
     .field label { color: #d9dcd5; font-size: 12px; font-weight: 650; }
     .field input { width: 100%; height: 43px; padding: 0 12px; border: 1px solid #41463f; border-radius: 8px; background: #121412; color: #fff; }
     .field input::placeholder { color: #777d74; }
+    .field select { width: 100%; height: 43px; }
+    .dialog-copy { margin: 0 0 18px; color: #bec2b9; font-size: 13px; line-height: 1.65; }
+    .dialog-status { min-height: 18px; margin: 14px 0 0; color: #c5f56a; font-size: 12px; }
     .form-error { min-height: 18px; margin: 0 0 10px; color: #ff9a91; font-size: 12px; }
     .form-status { min-height: 18px; margin: 0 0 10px; color: var(--muted); font-size: 12px; }
     .dialog-actions { display: flex; justify-content: flex-end; gap: 10px; }
     .secondary-button { min-height: 40px; padding: 0 15px; border: 1px solid #41463f; border-radius: 999px; background: transparent; color: #e6e8e3; cursor: pointer; }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; clip-path: inset(50%); }
 
     @media (max-width: 760px) {
       .app { display: block; }
-      .sidebar { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-right: 0; border-bottom: 1px solid #292c29; }
+      body { padding-bottom: calc(210px + env(safe-area-inset-bottom)); }
+      .sidebar { display: block; padding: 15px 20px 5px; border-right: 0; border-bottom: 1px solid #292c29; }
       .brand { margin: 0; }
-      .sidebar .nav-label, .sidebar .nav-item, .sidebar-note { display: none; }
+      .sidebar .nav-label, .sidebar-note { display: none; }
+      .sidebar nav { position: fixed; z-index: 5; right: 0; bottom: 0; left: 0; display: flex; justify-content: space-around; gap: 4px; padding: 7px 8px max(7px, env(safe-area-inset-bottom)); border-top: 1px solid #343834; background: #151715f7; backdrop-filter: blur(16px); }
+      .sidebar .nav-item { width: auto; min-width: 0; min-height: 49px; flex: 1; flex-direction: column; justify-content: center; gap: 3px; padding: 6px 4px; font-size: 11px; }
+      .sidebar .nav-item span:first-child { width: auto; font-size: 16px; }
+      .nav-count { display: none; }
       main { padding: 22px 18px 34px; }
-      .topbar { margin-bottom: 25px; }
-      .hero { min-height: 205px; }
+      .topbar { gap: 10px; margin-bottom: 25px; }
+      .topbar-actions { gap: 7px; }
+      .utility-button { width: 43px; padding: 0; font-size: 0; }
+      .utility-button .button-icon { font-size: 18px; }
+      .hero { min-height: 190px; padding: 27px 24px; }
       .hero-orbit { right: -40px; opacity: .35; }
-      .player { grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto; gap: 8px; padding: 10px 15px; }
+      .player { right: 9px; bottom: calc(70px + env(safe-area-inset-bottom)); left: 9px; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto; gap: 6px; min-height: 0; padding: 10px 12px; border: 1px solid #383d38; border-radius: 16px; box-shadow: 0 12px 34px #0008; }
       .player-message { display: block; grid-column: 1 / -1; grid-row: 2; min-height: 64px; }
       .player-actions { grid-column: 2; grid-row: 1; }
+      .player-actions:empty { display: none; }
+      .now-playing .cover { flex-basis: 40px; width: 40px; height: 40px; }
+      .player.expanded { top: 0; right: 0; bottom: 0; left: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto auto; align-content: center; gap: 24px; min-height: 100vh; min-height: 100dvh; padding: max(26px, env(safe-area-inset-top)) 22px max(26px, env(safe-area-inset-bottom)); border: 0; border-radius: 0; }
+      .player.expanded .now-playing .cover { width: min(58vw, 230px); height: min(58vw, 230px); }
+      .player.expanded .player-message { grid-column: 1; grid-row: 2; width: 100%; min-height: 0; }
+      .player.expanded .player-message iframe { height: min(190px, 25vh); }
+      .player.expanded .player-actions { grid-column: 1; grid-row: 3; }
     }
     @media (max-width: 450px) {
-      .topbar { align-items: stretch; }
+      .topbar { align-items: center; }
+      .search-wrap { min-width: 0; padding: 0 11px; }
+      .utility-button { width: 38px; min-height: 40px; }
       .add-button { width: 43px; padding: 0; overflow: hidden; font-size: 0; }
       .add-button span { font-size: 22px; }
+      .add-button span + span { display: none; }
       .hero-orbit { display: none; }
       .track-row { grid-template-columns: 38px minmax(0, 1fr) 36px; gap: 10px; padding: 9px; }
       .track-row .cover { width: 38px; height: 38px; }
       .track-row .icon-button { width: 32px; height: 32px; }
+      .library-tools { display: grid; grid-template-columns: 1fr 1fr; }
+      .library-tools select { min-width: 0; width: 100%; }
+      .dialog-actions { flex-wrap: wrap; }
+      .dialog-actions .secondary-button, .dialog-actions .add-button { flex: 1 1 auto; }
     }
   </style>
 </head>
@@ -130,9 +180,13 @@
       <div class="brand"><span class="brand-mark" aria-hidden="true">♫</span><span>ritmo</span></div>
       <div>
         <p class="nav-label">Tu espacio</p>
-        <button class="nav-item active" type="button"><span aria-hidden="true">▦</span><span>Tu biblioteca</span></button>
+        <nav aria-label="Secciones de la biblioteca">
+          <button class="nav-item active" type="button" data-kind="song" aria-current="page"><span aria-hidden="true">♫</span><span>Canciones</span><span class="nav-count" id="song-count">0</span></button>
+          <button class="nav-item" type="button" data-kind="album"><span aria-hidden="true">▣</span><span>Álbumes</span><span class="nav-count" id="album-count">0</span></button>
+          <button class="nav-item" type="button" data-kind="playlist"><span aria-hidden="true">☷</span><span>Listas</span><span class="nav-count" id="playlist-count">0</span></button>
+        </nav>
       </div>
-      <p class="sidebar-note">Tus enlaces se guardan en este navegador. No se suben a ningún servidor.</p>
+      <p class="sidebar-note">Biblioteca guardada en este dispositivo. Exporta una copia para moverla a otro equipo.</p>
     </aside>
 
     <main>
@@ -141,20 +195,32 @@
           <span aria-hidden="true">⌕</span>
           <input id="search" type="search" placeholder="Buscar en tu biblioteca" aria-label="Buscar en tu biblioteca">
         </label>
-        <button class="add-button" id="open-dialog" type="button"><span aria-hidden="true">＋</span><span>Añadir enlace</span></button>
+        <div class="topbar-actions">
+          <button class="utility-button" id="open-data-dialog" type="button" aria-label="Exportar o importar biblioteca"><span class="button-icon" aria-hidden="true">⇅</span><span>Datos</span></button>
+          <button class="utility-button" id="install-button" type="button"><span class="button-icon" aria-hidden="true">⌂</span><span>Instalar app</span></button>
+          <button class="add-button" id="open-dialog" type="button"><span aria-hidden="true">＋</span><span>Añadir enlace</span></button>
+        </div>
       </div>
 
       <section class="hero" aria-labelledby="page-title">
         <div class="hero-orbit" aria-hidden="true"></div>
         <p class="eyebrow">Tu música, a tu manera</p>
         <h1 id="page-title">Todo lo que te gusta, en un solo lugar.</h1>
-        <p class="hero-copy">Guarda enlaces de YouTube Music, encuentra tus favoritos y reprodúcelos desde el reproductor oficial.</p>
+        <p class="hero-copy">Tu música organizada en un reproductor personal. La biblioteca queda guardada en este dispositivo.</p>
       </section>
 
       <section aria-labelledby="library-title">
         <div class="section-heading">
-          <h2 id="library-title">Tu biblioteca</h2>
+          <h2 id="library-title">Canciones</h2>
           <span class="track-count" id="track-count">0 enlaces</span>
+        </div>
+        <div class="library-tools">
+          <label for="artist-filter">Artista
+            <select id="artist-filter"><option value="">Todos los artistas</option></select>
+          </label>
+          <label for="album-filter">Álbum
+            <select id="album-filter"><option value="">Todos los álbumes</option></select>
+          </label>
         </div>
         <div class="track-list" id="track-list" aria-live="polite"></div>
         <p class="notice" id="notice" role="status"></p>
@@ -162,16 +228,17 @@
     </main>
   </div>
 
-  <footer class="player" aria-label="Reproductor">
-    <div class="now-playing">
+  <footer class="player" id="player" aria-label="Reproductor">
+    <button class="now-playing" id="expand-player" type="button" aria-label="Ampliar reproductor" aria-expanded="false" disabled>
       <div class="cover" aria-hidden="true">♫</div>
       <div style="min-width:0">
         <p class="now-title" id="now-title">Nada reproduciéndose</p>
         <p class="now-subtitle" id="now-subtitle">Elige un enlace de tu biblioteca</p>
       </div>
-    </div>
+    </button>
     <div class="player-message" id="player-message">La reproducción usa el reproductor oficial de YouTube.</div>
     <div class="player-actions" id="player-actions"></div>
+    <button class="icon-button collapse-player" id="collapse-player" type="button" aria-label="Cerrar reproductor ampliado">×</button>
   </footer>
 
   <dialog id="add-dialog" aria-labelledby="dialog-title">
@@ -188,6 +255,23 @@
         <input id="track-title" name="title" maxlength="100" placeholder="Se importará desde YouTube si lo dejas vacío">
       </div>
       <div class="field">
+        <label for="entry-kind">Tipo de contenido</label>
+        <select id="entry-kind" name="kind">
+          <option value="auto">Detectar automáticamente</option>
+          <option value="song">Canción</option>
+          <option value="album">Álbum</option>
+          <option value="playlist">Lista de reproducción</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="track-artist">Artista (opcional)</label>
+        <input id="track-artist" name="artist" maxlength="100" placeholder="Nombre del artista">
+      </div>
+      <div class="field">
+        <label for="track-album">Álbum (opcional, para canciones)</label>
+        <input id="track-album" name="album" maxlength="100" placeholder="Nombre del álbum">
+      </div>
+      <div class="field">
         <label for="track-url">Enlace de YouTube Music o YouTube</label>
         <input id="track-url" name="url" type="url" inputmode="url" placeholder="https://music.youtube.com/playlist?list=..." required>
       </div>
@@ -200,16 +284,99 @@
     </form>
   </dialog>
 
+  <dialog id="data-dialog" aria-labelledby="data-dialog-title">
+    <div class="dialog-content">
+      <div class="dialog-heading">
+        <div>
+          <h2 id="data-dialog-title">Tu biblioteca, en local</h2>
+          <p>Exporta el JSON para llevarlo a otro equipo. Importar combina los enlaces y evita duplicados.</p>
+        </div>
+        <button class="close-button" id="close-data-dialog" type="button" aria-label="Cerrar">×</button>
+      </div>
+      <p class="dialog-copy">“Compartir” abre el menú del teléfono; elige Telegram si aparece. Si no, descarga el archivo y adjúntalo allí. El audio sigue dependiendo del reproductor oficial de YouTube y de sus reglas de reproducción en segundo plano.</p>
+      <div class="dialog-actions">
+        <button class="secondary-button" id="download-library" type="button">Descargar JSON</button>
+        <button class="secondary-button" id="share-library" type="button">Compartir…</button>
+        <button class="add-button" id="choose-import" type="button">Importar JSON</button>
+        <input class="visually-hidden" id="import-file" type="file" accept=".json,application/json" tabindex="-1">
+      </div>
+      <p class="dialog-status" id="data-status" role="status" aria-live="polite"></p>
+    </div>
+  </dialog>
+
+  <dialog id="install-dialog" aria-labelledby="install-dialog-title">
+    <div class="dialog-content">
+      <div class="dialog-heading">
+        <div>
+          <h2 id="install-dialog-title">Instala Ritmo</h2>
+          <p>Añade la app a la pantalla de inicio para abrirla como reproductor.</p>
+        </div>
+        <button class="close-button" id="close-install-dialog" type="button" aria-label="Cerrar">×</button>
+      </div>
+      <p class="dialog-copy">En Android, usa “Instalar aplicación” o “Añadir a pantalla de inicio” en el menú del navegador. En iPhone, abre el menú Compartir de Safari y elige “Añadir a pantalla de inicio”. La instalación requiere conexión HTTPS.</p>
+      <p class="dialog-copy">La app guarda el catálogo y su reproductor; no descarga ni almacena audio. La continuidad con la pantalla apagada depende de YouTube, el navegador y tu cuenta.</p>
+      <div class="dialog-actions">
+        <button class="secondary-button" id="close-install" type="button">Entendido</button>
+      </div>
+    </div>
+  </dialog>
+
   <script>
     const STORAGE_KEY = "ritmo-library-v1";
+    const KINDS = ["song", "album", "playlist"];
+    const KIND_LABELS = { song: "Canciones", album: "Álbumes", playlist: "Listas" };
     const libraryElement = document.querySelector("#track-list");
     const countElement = document.querySelector("#track-count");
     const noticeElement = document.querySelector("#notice");
     const dialog = document.querySelector("#add-dialog");
     const form = document.querySelector("#add-form");
     const searchInput = document.querySelector("#search");
+    const artistFilter = document.querySelector("#artist-filter");
+    const albumFilter = document.querySelector("#album-filter");
+    const dataDialog = document.querySelector("#data-dialog");
+    const installDialog = document.querySelector("#install-dialog");
+    const importInput = document.querySelector("#import-file");
+    let libraryLoadError = null;
     let tracks = loadTracks();
+    let activeKind = "song";
     let currentTrackId = null;
+    let deferredInstallPrompt = null;
+
+    function inferKind(track) {
+      if (typeof track.videoId === "string") return "song";
+      if (/^OLAK/i.test(track.playlistId || "") || /^\s*album\s*[-:]/i.test(track.title || "")) return "album";
+      return "playlist";
+    }
+
+    function normalizeTrack(track) {
+      if (!track || typeof track !== "object" || typeof track.id !== "string" || !track.id ||
+          typeof track.title !== "string" || !track.title.trim() ||
+          typeof track.url !== "string" || !track.url.trim()) {
+        throw new Error("Hay un elemento con campos incompletos en la biblioteca.");
+      }
+      const hasVideo = typeof track.videoId === "string" && /^[A-Za-z0-9_-]{11}$/.test(track.videoId);
+      const hasPlaylist = typeof track.playlistId === "string" && /^[A-Za-z0-9_-]{1,200}$/.test(track.playlistId);
+      if (hasVideo === hasPlaylist) throw new Error("Hay un enlace de YouTube no válido en la biblioteca.");
+      const url = track.url.trim();
+      const urlTarget = getYouTubeTarget(url);
+      if (!urlTarget || (hasVideo && urlTarget.videoId !== track.videoId) ||
+          (hasPlaylist && urlTarget.playlistId !== track.playlistId)) {
+        throw new Error("El enlace guardado no coincide con su vídeo o playlist de YouTube.");
+      }
+      const kind = track.kind || inferKind(track);
+      if (!KINDS.includes(kind) || (kind !== "song" && !hasPlaylist) || (kind === "song" && !hasVideo)) {
+        throw new Error("Hay un tipo de contenido incompatible con el enlace guardado.");
+      }
+      return {
+        id: track.id,
+        title: track.title.trim(),
+        url,
+        kind,
+        artist: typeof track.artist === "string" ? track.artist.trim() : "",
+        album: typeof track.album === "string" ? track.album.trim() : "",
+        ...(hasVideo ? { videoId: track.videoId } : { playlistId: track.playlistId })
+      };
+    }
 
     function loadTracks() {
       try {
@@ -217,32 +384,32 @@
         if (!saved) return [];
         const parsed = JSON.parse(saved);
         if (!Array.isArray(parsed)) throw new Error("Formato de biblioteca no válido.");
-        return parsed.filter((track) =>
-          track &&
-          typeof track.id === "string" &&
-          typeof track.title === "string" &&
-          typeof track.url === "string" &&
-          (
-            (typeof track.videoId === "string" && /^[A-Za-z0-9_-]{11}$/.test(track.videoId)) ||
-            (typeof track.playlistId === "string" && /^[A-Za-z0-9_-]{1,200}$/.test(track.playlistId))
-          )
-        );
+        return parsed.map(normalizeTrack);
       } catch (error) {
-        noticeElement.textContent = "No se pudo leer la biblioteca guardada. Puedes seguir usando la página, pero quizá no se conserven tus cambios.";
+        libraryLoadError = error;
+        noticeElement.textContent = "No se pudo leer la biblioteca local. Importa una copia válida para recuperarla.";
         console.error("No se pudo cargar la biblioteca:", error);
         return [];
       }
     }
 
+    function libraryDocument() {
+      return { format: "ritmo-library", version: 1, tracks };
+    }
+
     function saveTracks() {
+      if (libraryLoadError) {
+        noticeElement.textContent = "No se guardaron los cambios porque la biblioteca local no se pudo leer. Importa una copia JSON válida para recuperarla.";
+        return false;
+      }
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(tracks));
-        return true;
       } catch (error) {
         noticeElement.textContent = "No se pudo guardar en este navegador. Revisa el espacio disponible o la configuración de privacidad.";
         console.error("No se pudo guardar la biblioteca:", error);
         return false;
       }
+      return true;
     }
 
     function getYouTubeTarget(value) {
@@ -252,17 +419,13 @@
       } catch {
         return null;
       }
-
       const host = url.hostname.toLowerCase().replace(/^www\./, "");
       if (url.protocol !== "https:" || !["youtube.com", "music.youtube.com", "youtu.be"].includes(host)) return null;
-
       const playlistId = url.searchParams.get("list") || "";
       const validPlaylistId = /^[A-Za-z0-9_-]{1,200}$/.test(playlistId);
-
       if (host !== "youtu.be" && (url.pathname === "/playlist" || url.pathname === "/embed/videoseries")) {
         return validPlaylistId ? { playlistId } : null;
       }
-
       let videoId = "";
       if (host === "youtu.be") {
         videoId = url.pathname.split("/").filter(Boolean)[0] || "";
@@ -272,12 +435,11 @@
         const parts = url.pathname.split("/").filter(Boolean);
         if (["embed", "shorts", "live"].includes(parts[0])) videoId = parts[1] || "";
       }
-
       if (/^[A-Za-z0-9_-]{11}$/.test(videoId)) return { videoId };
       return validPlaylistId ? { playlistId } : null;
     }
 
-    async function getYouTubeTitle(value) {
+    async function getYouTubeMetadata(value) {
       const endpoint = new URL("https://www.youtube.com/oembed");
       endpoint.searchParams.set("url", value);
       endpoint.searchParams.set("format", "json");
@@ -287,15 +449,45 @@
       if (!metadata || typeof metadata.title !== "string" || !metadata.title.trim()) {
         throw new Error("YouTube no devolvió un título para este enlace.");
       }
-      return metadata.title.trim();
+      return metadata;
+    }
+
+    function updateSelect(select, values, placeholder) {
+      const previousValue = select.value;
+      select.replaceChildren(new Option(placeholder, ""));
+      for (const value of values) select.add(new Option(value, value));
+      select.value = values.includes(previousValue) ? previousValue : "";
     }
 
     function render() {
+      const sectionTracks = tracks.filter((track) => track.kind === activeKind);
+      const artistNames = [...new Set(sectionTracks.map((track) => track.artist).filter(Boolean))]
+        .sort((a, b) => a.localeCompare(b));
+      const albumNames = [...new Set(sectionTracks
+        .map((track) => activeKind === "album" ? track.title : track.album)
+        .filter(Boolean))]
+        .sort((a, b) => a.localeCompare(b));
+      updateSelect(artistFilter, artistNames, "Todos los artistas");
+      updateSelect(albumFilter, albumNames, "Todos los álbumes");
+      albumFilter.disabled = activeKind === "playlist" || albumNames.length === 0;
+
       const query = searchInput.value.trim().toLocaleLowerCase();
-      const visibleTracks = tracks.filter((track) =>
-        track.title.toLocaleLowerCase().includes(query) || track.url.toLocaleLowerCase().includes(query)
-      );
-      countElement.textContent = `${tracks.length} ${tracks.length === 1 ? "enlace" : "enlaces"}`;
+      const artist = artistFilter.value.toLocaleLowerCase();
+      const album = albumFilter.value.toLocaleLowerCase();
+      const visibleTracks = sectionTracks.filter((track) => {
+        const albumName = activeKind === "album" ? track.title : track.album;
+        const matchesQuery = [track.title, track.artist, track.album, track.url]
+          .some((value) => value.toLocaleLowerCase().includes(query));
+        return matchesQuery &&
+          (!artist || track.artist.toLocaleLowerCase() === artist) &&
+          (!album || albumName.toLocaleLowerCase() === album);
+      });
+
+      document.querySelector("#library-title").textContent = KIND_LABELS[activeKind];
+      countElement.textContent = `${sectionTracks.length} ${sectionTracks.length === 1 ? "elemento" : "elementos"}`;
+      document.querySelector("#song-count").textContent = tracks.filter((track) => track.kind === "song").length;
+      document.querySelector("#album-count").textContent = tracks.filter((track) => track.kind === "album").length;
+      document.querySelector("#playlist-count").textContent = tracks.filter((track) => track.kind === "playlist").length;
       libraryElement.replaceChildren();
 
       if (visibleTracks.length === 0) {
@@ -304,11 +496,14 @@
         const icon = document.createElement("div");
         icon.className = "empty-icon";
         icon.setAttribute("aria-hidden", "true");
-        icon.textContent = query ? "⌕" : "♫";
+        icon.textContent = query || artist || album ? "⌕" : "♫";
         const title = document.createElement("strong");
-        title.textContent = query ? "No encontramos coincidencias" : "Tu biblioteca empieza aquí";
+        title.textContent = query || artist || album ? "No encontramos coincidencias" :
+          sectionTracks.length ? "No hay resultados con estos filtros" : `Aún no tienes ${KIND_LABELS[activeKind].toLocaleLowerCase()}`;
         const copy = document.createElement("p");
-        copy.textContent = query ? "Prueba con otro título o enlace." : "Añade un enlace de YouTube Music para tenerlo a mano.";
+        copy.textContent = query || artist || album
+          ? "Prueba con otro título, artista, álbum o enlace."
+          : "Añade un enlace de YouTube Music para tenerlo a mano.";
         empty.append(icon, title, copy);
         libraryElement.append(empty);
         return;
@@ -320,16 +515,24 @@
         const cover = document.createElement("div");
         cover.className = "cover";
         cover.setAttribute("aria-hidden", "true");
-        cover.textContent = "♫";
+        cover.textContent = track.kind === "album" ? "▣" : track.kind === "playlist" ? "☷" : "♫";
         const info = document.createElement("div");
         info.className = "track-info";
         const title = document.createElement("p");
         title.className = "track-title";
         title.textContent = track.title;
+        info.append(title);
+        const metadata = [track.artist, track.kind === "song" ? track.album : ""].filter(Boolean).join(" · ");
+        if (metadata) {
+          const meta = document.createElement("p");
+          meta.className = "track-meta";
+          meta.textContent = metadata;
+          info.append(meta);
+        }
         const link = document.createElement("p");
         link.className = "track-link";
         link.textContent = track.url;
-        info.append(title, link);
+        info.append(link);
 
         const actions = document.createElement("div");
         actions.className = "row-actions";
@@ -357,6 +560,9 @@
       currentTrackId = track.id;
       document.querySelector("#now-title").textContent = track.title;
       document.querySelector("#now-subtitle").textContent = "Reproduciendo desde YouTube";
+      const expandButton = document.querySelector("#expand-player");
+      expandButton.disabled = false;
+      expandButton.setAttribute("aria-label", `Ampliar reproductor: ${track.title}`);
       const message = document.querySelector("#player-message");
       const frame = document.createElement("iframe");
       frame.title = `Reproductor de YouTube: ${track.title}`;
@@ -380,16 +586,132 @@
     }
 
     function removeTrack(id) {
+      const previousTracks = tracks;
       tracks = tracks.filter((track) => track.id !== id);
+      if (!saveTracks()) {
+        tracks = previousTracks;
+        render();
+        return;
+      }
       if (currentTrackId === id) {
         currentTrackId = null;
+        document.querySelector("#player").classList.remove("expanded");
+        const expandButton = document.querySelector("#expand-player");
+        expandButton.disabled = true;
+        expandButton.setAttribute("aria-expanded", "false");
+        expandButton.setAttribute("aria-label", "Ampliar reproductor");
         document.querySelector("#now-title").textContent = "Nada reproduciéndose";
         document.querySelector("#now-subtitle").textContent = "Elige un enlace de tu biblioteca";
         document.querySelector("#player-message").textContent = "La reproducción usa el reproductor oficial de YouTube.";
         document.querySelector("#player-actions").replaceChildren();
       }
-      if (saveTracks()) noticeElement.textContent = "Enlace eliminado.";
+      noticeElement.textContent = "Elemento eliminado.";
       render();
+    }
+
+    function parseImportedLibrary(data) {
+      if (Array.isArray(data)) return data.map(normalizeTrack);
+      if (!data || data.format !== "ritmo-library" || data.version !== 1 || !Array.isArray(data.tracks)) {
+        throw new Error("El archivo no es una copia Ritmo reconocida; la biblioteca no se modificó.");
+      }
+      return data.tracks.map(normalizeTrack);
+    }
+
+    function mergeTracks(primaryTracks, additionalTracks) {
+      const merged = primaryTracks.slice();
+      const seen = new Set(merged.map((track) => track.videoId ? `video:${track.videoId}` : `playlist:${track.playlistId}`));
+      for (const track of additionalTracks) {
+        const key = track.videoId ? `video:${track.videoId}` : `playlist:${track.playlistId}`;
+        if (!seen.has(key)) {
+          merged.push(track);
+          seen.add(key);
+        }
+      }
+      return merged;
+    }
+
+    function createLibraryFile() {
+      const timestamp = new Date().toISOString().slice(0, 10);
+      return new File([JSON.stringify(libraryDocument(), null, 2)], `ritmo-biblioteca-${timestamp}.json`, {
+        type: "application/json"
+      });
+    }
+
+    function downloadLibraryFile(file) {
+      const objectUrl = URL.createObjectURL(file);
+      const link = document.createElement("a");
+      link.href = objectUrl;
+      link.download = file.name;
+      document.body.append(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+    }
+
+    async function shareLibraryFile() {
+      const file = createLibraryFile();
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: "Copia de mi biblioteca Ritmo",
+            text: "Copia JSON de mi biblioteca musical."
+          });
+          document.querySelector("#data-status").textContent = "Copia compartida.";
+        } catch (error) {
+          if (error.name === "AbortError") {
+            document.querySelector("#data-status").textContent = "Compartir cancelado.";
+            return;
+          }
+          throw error;
+        }
+        return;
+      }
+      downloadLibraryFile(file);
+      document.querySelector("#data-status").textContent = "Este navegador no comparte archivos; se descargó el JSON para adjuntarlo en Telegram.";
+    }
+
+    async function importLibraryFile(file) {
+      const dataStatus = document.querySelector("#data-status");
+      dataStatus.textContent = "Leyendo archivo JSON…";
+      try {
+        const importedTracks = parseImportedLibrary(JSON.parse(await file.text()));
+        if (libraryLoadError && !window.confirm("No se pudo leer la biblioteca actual. ¿Quieres reemplazarla con esta copia JSON?")) {
+          dataStatus.textContent = "Importación cancelada.";
+          return;
+        }
+        const previousTracks = tracks;
+        const previousLoadError = libraryLoadError;
+        libraryLoadError = null;
+        tracks = mergeTracks(tracks, importedTracks);
+        const addedCount = tracks.length - previousTracks.length;
+        if (!saveTracks()) {
+          tracks = previousTracks;
+          libraryLoadError = previousLoadError;
+          dataStatus.textContent = noticeElement.textContent;
+          render();
+          return;
+        }
+        render();
+        dataStatus.textContent = `Importación completada: ${addedCount} nuevos; ${importedTracks.length - addedCount} duplicados omitidos.`;
+      } catch (error) {
+        dataStatus.textContent = error.message || "No se pudo leer el archivo JSON.";
+        console.error("No se pudo importar la biblioteca:", error);
+      } finally {
+        importInput.value = "";
+      }
+    }
+
+    function registerServiceWorker() {
+      const supportedOrigin = location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1";
+      if (!("serviceWorker" in navigator) || !supportedOrigin) {
+        noticeElement.textContent = "Para instalar Ritmo como app, abre la versión publicada por HTTPS.";
+        return;
+      }
+      navigator.serviceWorker.register("./sw.js").catch((error) => {
+        noticeElement.textContent = "No se pudo preparar la instalación de la app. Recarga la página o inténtalo más tarde.";
+        console.error("No se pudo registrar el service worker:", error);
+      });
     }
 
     document.querySelector("#open-dialog").addEventListener("click", () => {
@@ -403,45 +725,163 @@
     dialog.addEventListener("click", (event) => {
       if (event.target === dialog) dialog.close();
     });
+    document.querySelector("#open-data-dialog").addEventListener("click", () => {
+      document.querySelector("#data-status").textContent = "";
+      dataDialog.showModal();
+    });
+    document.querySelector("#close-data-dialog").addEventListener("click", () => dataDialog.close());
+    dataDialog.addEventListener("click", (event) => {
+      if (event.target === dataDialog) dataDialog.close();
+    });
+    document.querySelector("#download-library").addEventListener("click", () => {
+      try {
+        downloadLibraryFile(createLibraryFile());
+        document.querySelector("#data-status").textContent = "Copia JSON descargada.";
+      } catch (error) {
+        document.querySelector("#data-status").textContent = "No se pudo crear el archivo JSON.";
+        console.error("No se pudo exportar la biblioteca:", error);
+      }
+    });
+    document.querySelector("#share-library").addEventListener("click", async () => {
+      try {
+        await shareLibraryFile();
+      } catch (error) {
+        document.querySelector("#data-status").textContent = "No se pudo compartir el archivo JSON.";
+        console.error("No se pudo compartir la biblioteca:", error);
+      }
+    });
+    document.querySelector("#choose-import").addEventListener("click", () => importInput.click());
+    importInput.addEventListener("change", () => {
+      const file = importInput.files && importInput.files[0];
+      if (file) importLibraryFile(file);
+    });
+    document.querySelector("#close-install-dialog").addEventListener("click", () => installDialog.close());
+    document.querySelector("#close-install").addEventListener("click", () => installDialog.close());
+    installDialog.addEventListener("click", (event) => {
+      if (event.target === installDialog) installDialog.close();
+    });
+    window.addEventListener("beforeinstallprompt", (event) => {
+      event.preventDefault();
+      deferredInstallPrompt = event;
+    });
+    window.addEventListener("appinstalled", () => {
+      deferredInstallPrompt = null;
+      noticeElement.textContent = "Ritmo se ha instalado en tu dispositivo.";
+    });
+    document.querySelector("#install-button").addEventListener("click", async (event) => {
+      const button = event.currentTarget;
+      if (!deferredInstallPrompt) {
+        installDialog.showModal();
+        return;
+      }
+      const installPrompt = deferredInstallPrompt;
+      deferredInstallPrompt = null;
+      button.disabled = true;
+      try {
+        await installPrompt.prompt();
+        const choice = await installPrompt.userChoice;
+        noticeElement.textContent = choice.outcome === "accepted"
+          ? "Ritmo se está instalando."
+          : "La instalación no se ha iniciado.";
+      } catch (error) {
+        noticeElement.textContent = "No se pudo iniciar la instalación. Usa el menú del navegador.";
+        console.error("No se pudo mostrar el diálogo de instalación:", error);
+      } finally {
+        button.disabled = false;
+      }
+    });
+    document.querySelector("#expand-player").addEventListener("click", () => {
+      document.querySelector("#player").classList.add("expanded");
+      document.querySelector("#expand-player").setAttribute("aria-expanded", "true");
+      document.querySelector("#collapse-player").focus();
+    });
+    document.querySelector("#collapse-player").addEventListener("click", () => {
+      document.querySelector("#player").classList.remove("expanded");
+      document.querySelector("#expand-player").setAttribute("aria-expanded", "false");
+      document.querySelector("#expand-player").focus();
+    });
     searchInput.addEventListener("input", render);
+    artistFilter.addEventListener("change", render);
+    albumFilter.addEventListener("change", render);
+    document.querySelectorAll(".nav-item[data-kind]").forEach((button) => {
+      button.addEventListener("click", () => {
+        activeKind = button.dataset.kind;
+        document.querySelectorAll(".nav-item[data-kind]").forEach((item) => {
+          const active = item === button;
+          item.classList.toggle("active", active);
+          if (active) item.setAttribute("aria-current", "page");
+          else item.removeAttribute("aria-current");
+        });
+        artistFilter.value = "";
+        albumFilter.value = "";
+        render();
+      });
+    });
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
       const titleInput = document.querySelector("#track-title");
       const submitButton = form.querySelector('button[type="submit"]');
       const formError = document.querySelector("#form-error");
       const formStatus = document.querySelector("#form-status");
-      let title = titleInput.value.trim();
+      const titleInputValue = titleInput.value.trim();
       const url = document.querySelector("#track-url").value.trim();
       const target = getYouTubeTarget(url);
+      const selectedKind = document.querySelector("#entry-kind").value;
       if (!target) {
         formError.textContent = "Pega un enlace HTTPS válido de un vídeo o una playlist de YouTube o YouTube Music.";
+        return;
+      }
+      if (target.videoId && ["album", "playlist"].includes(selectedKind)) {
+        formError.textContent = "Para añadir un álbum o una lista, pega el enlace de una playlist.";
+        return;
+      }
+      if (target.playlistId && selectedKind === "song") {
+        formError.textContent = "Para añadir una canción, pega el enlace de un vídeo individual.";
         return;
       }
 
       formError.textContent = "";
       submitButton.disabled = true;
       try {
-        if (!title) {
-          formStatus.textContent = "Obteniendo el título desde YouTube…";
+        let title = titleInputValue;
+        let metadata = null;
+        if (!title || (selectedKind === "auto" && target.playlistId && /^OLAK/i.test(target.playlistId) === false)) {
+          formStatus.textContent = "Obteniendo metadatos desde YouTube…";
           try {
-            title = await getYouTubeTitle(url);
+            metadata = await getYouTubeMetadata(url);
+            if (!title) title = metadata.title.trim();
           } catch (error) {
-            formError.textContent = "No se pudieron obtener los metadatos de YouTube. Puedes volver a intentarlo o escribir un título manualmente.";
-            console.error("No se pudieron obtener los metadatos de YouTube:", error);
-            return;
+            if (!title) {
+              formError.textContent = "No se pudieron obtener los metadatos. Puedes volver a intentarlo o escribir un título manualmente.";
+              console.error("No se pudieron obtener los metadatos de YouTube:", error);
+              return;
+            }
+            console.error("No se pudieron detectar los metadatos de YouTube:", error);
           }
         }
-        const track = {
+        const inferredKind = target.videoId ? "song" :
+          (/^OLAK/i.test(target.playlistId) || (metadata && /^\s*album\s*[-:]/i.test(metadata.title)) ? "album" : "playlist");
+        const kind = selectedKind === "auto" ? inferredKind : selectedKind;
+        const track = normalizeTrack({
           id: typeof crypto.randomUUID === "function" ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`,
           title,
           url,
+          kind,
+          artist: document.querySelector("#track-artist").value,
+          album: document.querySelector("#track-album").value,
           ...target
-        };
+        });
+        const previousTracks = tracks;
         tracks.unshift(track);
         const saved = saveTracks();
+        if (!saved) {
+          tracks = previousTracks;
+          render();
+          return;
+        }
         form.reset();
         dialog.close();
-        if (saved) noticeElement.textContent = "Enlace añadido a tu biblioteca.";
+        noticeElement.textContent = "Elemento añadido a tu biblioteca.";
         render();
       } finally {
         formStatus.textContent = "";
@@ -450,6 +890,7 @@
     });
 
     render();
+    registerServiceWorker();
   </script>
 </body>
 </html>
