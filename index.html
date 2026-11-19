@@ -14,14 +14,15 @@
     :root {
       color-scheme: dark;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #101110;
-      color: #f5f5f2;
+      background: #0c0e0c;
+      color: #f4f6f1;
       font-synthesis: none;
       text-rendering: optimizeLegibility;
-      --muted: #a4a7a1;
-      --panel: #191b19;
-      --panel-light: #222522;
-      --accent: #c5f56a;
+      --muted: #9da49a;
+      --panel: #151815;
+      --panel-light: #202520;
+      --accent: #d3fb78;
+      --line: #2b312b;
     }
 
     * { box-sizing: border-box; }
@@ -29,6 +30,8 @@
     body { margin: 0; min-width: 320px; min-height: 100vh; padding-bottom: 104px; }
     button, input { font: inherit; }
     button { color: inherit; }
+    svg { display: block; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    svg[hidden] { display: none; }
     button:focus-visible, input:focus-visible, a:focus-visible {
       outline: 2px solid var(--accent);
       outline-offset: 3px;
@@ -37,26 +40,32 @@
     .app { display: grid; grid-template-columns: 248px minmax(0, 1fr); min-height: calc(100vh - 104px); }
     .sidebar { padding: 28px 18px; border-right: 1px solid #292c29; background: #151715; }
     .brand { display: flex; align-items: center; gap: 11px; margin: 0 0 36px 8px; font-size: 19px; font-weight: 750; letter-spacing: -.5px; }
-    .brand-mark { display: grid; width: 31px; height: 31px; place-items: center; border-radius: 10px; background: var(--accent); color: #171a13; }
+    .brand-mark { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 11px; background: var(--accent); color: #171a13; box-shadow: 0 5px 18px #d3fb7830; }
+    .brand-mark svg { width: 19px; height: 19px; stroke-width: 2; }
     .nav-label { margin: 0 0 12px 10px; color: #777c75; font-size: 11px; font-weight: 700; letter-spacing: 1.3px; text-transform: uppercase; }
     .nav-item { display: flex; width: 100%; align-items: center; gap: 12px; padding: 12px 11px; border: 0; border-radius: 9px; background: transparent; color: #d7d9d4; text-align: left; cursor: pointer; }
     .nav-item.active { background: #282b27; color: var(--accent); }
-    .nav-item span:first-child { width: 19px; color: inherit; text-align: center; }
+    .nav-item span:first-child { display: grid; width: 20px; color: inherit; }
+    .nav-item svg { width: 19px; height: 19px; }
     .nav-count { margin-left: auto; color: #898d86; font-size: 11px; }
     .sidebar-note { max-width: 190px; margin: 30px 9px 0; color: #898d86; font-size: 12px; line-height: 1.6; }
 
     main { width: min(1120px, 100%); margin: 0 auto; padding: 27px clamp(20px, 5vw, 64px) 48px; }
     .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 43px; }
-    .search-wrap { display: flex; width: min(440px, 100%); align-items: center; gap: 10px; padding: 0 15px; border: 1px solid #343834; border-radius: 999px; background: #1b1e1b; color: var(--muted); }
+    .search-wrap { display: flex; width: min(440px, 100%); align-items: center; gap: 10px; padding: 0 15px; border: 1px solid #343a34; border-radius: 999px; background: #171b17; color: var(--muted); }
+    .search-wrap svg { flex: 0 0 19px; width: 19px; height: 19px; }
     .search-wrap input { width: 100%; height: 43px; border: 0; outline: 0; background: transparent; color: #fff; }
     .search-wrap input::placeholder { color: #969a93; }
     .topbar-actions { display: flex; align-items: center; gap: 9px; }
-    .utility-button { display: inline-flex; min-height: 42px; align-items: center; justify-content: center; gap: 8px; padding: 0 14px; border: 1px solid #41463f; border-radius: 999px; background: #1b1e1b; color: #e6e8e3; font-weight: 650; cursor: pointer; white-space: nowrap; }
+    .utility-button { display: inline-flex; min-height: 42px; align-items: center; justify-content: center; gap: 8px; padding: 0 14px; border: 1px solid #41483f; border-radius: 999px; background: #171b17; color: #e6e8e3; font-weight: 650; cursor: pointer; white-space: nowrap; }
     .utility-button:hover { background: #292d29; }
-    .add-button { display: inline-flex; min-height: 42px; align-items: center; justify-content: center; gap: 8px; padding: 0 17px; border: 0; border-radius: 999px; background: var(--accent); color: #1a2012; font-weight: 750; cursor: pointer; white-space: nowrap; }
+    .button-icon { display: grid; place-items: center; }
+    .button-icon svg { width: 18px; height: 18px; }
+    .add-button { display: inline-flex; min-height: 42px; align-items: center; justify-content: center; gap: 8px; padding: 0 17px; border: 0; border-radius: 999px; background: var(--accent); color: #1a2012; font-weight: 750; cursor: pointer; white-space: nowrap; box-shadow: 0 6px 20px #d3fb7820; }
     .add-button:hover { background: #d3ff81; }
+    .add-button svg { width: 19px; height: 19px; stroke-width: 2.2; }
 
-    .hero { position: relative; overflow: hidden; min-height: 230px; padding: clamp(26px, 5vw, 48px); border: 1px solid #38402e; border-radius: 20px; background: radial-gradient(ellipse at 87% 46%, #596a38 0, #35432b 20%, transparent 48%), linear-gradient(115deg, #252b21, #20231f 70%); }
+    .hero { position: relative; overflow: hidden; min-height: 230px; padding: clamp(26px, 5vw, 48px); border: 1px solid #394333; border-radius: 24px; background: radial-gradient(ellipse at 87% 46%, #748c4b 0, #35432b 21%, transparent 49%), linear-gradient(115deg, #252c23, #171b18 74%); box-shadow: inset 0 1px #ffffff08, 0 20px 50px #0003; }
     .eyebrow { margin: 0 0 14px; color: var(--accent); font-size: 11px; font-weight: 750; letter-spacing: 1.6px; text-transform: uppercase; }
     h1 { max-width: 550px; margin: 0; font-size: clamp(32px, 5vw, 52px); letter-spacing: -2px; line-height: 1.04; }
     .hero-copy { max-width: 490px; margin: 16px 0 0; color: #c4c8bd; font-size: 14px; line-height: 1.7; }
@@ -74,7 +83,11 @@
     .track-row { display: grid; grid-template-columns: 44px minmax(0, 1fr) 42px; align-items: center; gap: 13px; min-height: 72px; padding: 10px 15px; border-bottom: 1px solid #2a2d2a; }
     .track-row:last-child { border-bottom: 0; }
     .track-row:hover { background: #202320; }
-    .cover { display: grid; width: 43px; height: 43px; place-items: center; border-radius: 8px; background: linear-gradient(145deg, #586740, #293127); color: var(--accent); font-size: 17px; }
+    .track-row.is-current { background: #1b2218; }
+    .track-row.is-current .track-title { color: var(--accent); }
+    .cover { position: relative; display: grid; width: 43px; height: 43px; overflow: hidden; place-items: center; border-radius: 10px; background: linear-gradient(145deg, #586740, #293127); color: var(--accent); font-size: 17px; }
+    .cover svg { width: 23px; height: 23px; }
+    .cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
     .track-info { min-width: 0; }
     .track-title { overflow: hidden; margin: 0 0 5px; font-size: 14px; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
     .track-link { overflow: hidden; margin: 0; color: #989d95; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
@@ -82,32 +95,68 @@
     .row-actions { display: flex; justify-content: flex-end; gap: 4px; }
     .icon-button { display: grid; width: 36px; height: 36px; place-items: center; border: 0; border-radius: 50%; background: transparent; color: #b6bab3; cursor: pointer; }
     .icon-button:hover { background: #343834; color: #fff; }
+    .track-row.is-current .row-actions .icon-button:first-child { background: #d3fb7818; color: var(--accent); }
     .empty-state { padding: 48px 20px; color: var(--muted); text-align: center; }
     .empty-icon { display: grid; width: 48px; height: 48px; margin: 0 auto 13px; place-items: center; border: 1px solid #43483f; border-radius: 50%; color: var(--accent); font-size: 22px; }
     .empty-state strong { display: block; margin-bottom: 7px; color: #e8eae5; font-size: 14px; }
     .empty-state p { margin: 0; font-size: 13px; line-height: 1.6; }
     .notice { min-height: 20px; margin: 13px 2px 0; color: #b5c69b; font-size: 12px; }
 
-    .player { position: fixed; z-index: 3; right: 0; bottom: 0; left: 0; display: grid; grid-template-columns: minmax(160px, 1fr) minmax(300px, 1.3fr) minmax(160px, 1fr); align-items: center; gap: 20px; min-height: 88px; padding: 12px 25px; border-top: 1px solid #333733; background: #171917f5; backdrop-filter: blur(14px); }
+    .player { position: fixed; z-index: 3; right: 0; bottom: 0; left: 0; display: flex; align-items: center; justify-content: space-between; gap: 18px; min-height: 88px; padding: 13px clamp(18px, 3vw, 42px); border-top: 1px solid #333a33; background: #111511f5; backdrop-filter: blur(18px); box-shadow: 0 -12px 40px #0005; }
+    .player.has-track { align-items: stretch; min-height: 250px; padding-top: 13px; padding-bottom: 13px; }
+    body.player-active { padding-bottom: 300px; }
+    .player:not(.has-track) .player-progress { display: none; }
+    .player:not(.has-track) .player-controls { display: none; }
+    .player-top { display: flex; min-width: 0; flex: 1 1 260px; align-items: center; justify-content: space-between; gap: 16px; }
     .now-playing { display: flex; min-width: 0; align-items: center; gap: 12px; padding: 0; border: 0; background: transparent; color: inherit; text-align: left; cursor: pointer; }
-    .now-playing .cover { flex: 0 0 46px; width: 46px; height: 46px; }
-    .now-title { overflow: hidden; margin: 0 0 5px; font-size: 13px; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
-    .now-subtitle { margin: 0; color: var(--muted); font-size: 11px; }
-    .player-message { color: #a8aca5; font-size: 12px; text-align: center; }
-    .player-actions { display: flex; justify-content: flex-end; }
-    .player-message iframe { display: block; width: 100%; height: 64px; border: 0; border-radius: 8px; background: #101110; }
-    .open-youtube { display: inline-flex; min-height: 38px; align-items: center; padding: 0 13px; border: 1px solid #41463f; border-radius: 999px; color: #e6e8e3; font-size: 12px; text-decoration: none; white-space: nowrap; }
+    .now-playing .cover { flex: 0 0 52px; width: 52px; height: 52px; border-radius: 12px; }
+    .now-copy { display: block; min-width: 0; }
+    .now-title { display: block; overflow: hidden; margin: 0 0 5px; font-size: 14px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+    .now-subtitle { display: block; overflow: hidden; color: var(--muted); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+    .expand-icon { display: none; flex: 0 0 17px; width: 17px; height: 17px; color: #798075; }
+    .player-controls { display: flex; align-items: center; gap: 8px; }
+    .transport-button { display: grid; width: 42px; height: 42px; flex: 0 0 auto; place-items: center; border: 0; border-radius: 50%; background: transparent; color: #eef1e8; cursor: pointer; transition: background .16s ease, transform .16s ease; }
+    .transport-button:hover:not(:disabled) { background: #ffffff12; transform: scale(1.05); }
+    .transport-button:disabled { color: #697066; cursor: not-allowed; }
+    .transport-button svg { width: 20px; height: 20px; }
+    .play-toggle { width: 48px; height: 48px; background: var(--accent); color: #12160e; box-shadow: 0 5px 18px #d3fb7830; }
+    .play-toggle:hover:not(:disabled) { background: #e1ffa0; }
+    .play-toggle svg { width: 23px; height: 23px; fill: currentColor; stroke: none; }
+    .play-toggle .pause-icon { fill: currentColor; }
+    .player-progress { display: flex; min-width: 0; flex: 1 1 220px; align-items: center; gap: 10px; }
+    .time-label { min-width: 30px; color: #929a8f; font-variant-numeric: tabular-nums; font-size: 10px; text-align: center; }
+    .player-progress input { width: 100%; height: 4px; accent-color: var(--accent); cursor: pointer; }
+    .player-progress input:disabled { cursor: default; opacity: .48; }
+    .player-message { display: none; flex: 0 1 min(38vw, 480px); align-self: center; color: #a8aca5; font-size: 12px; text-align: center; }
+    .player.has-track .player-message { display: block; min-width: 200px; }
+    #youtube-player, .player-message iframe { display: block; width: 100%; height: auto; min-width: 200px; min-height: 200px; aspect-ratio: 16 / 9; border: 0; border-radius: 14px; background: #080908; box-shadow: 0 10px 28px #0006; }
+    .player-status { margin: 8px 0 0; color: #d3fb78; font-size: 12px; line-height: 1.45; }
+    .player-status:empty { display: none; }
+    .player-actions { display: none; flex: 0 0 auto; justify-content: flex-end; }
+    .player.has-track .player-actions { display: flex; }
+    .open-youtube { display: inline-flex; min-height: 40px; align-items: center; gap: 8px; padding: 0 14px; border: 1px solid #41483f; border-radius: 999px; background: #171b17; color: #e6e8e3; font-size: 12px; font-weight: 650; text-decoration: none; white-space: nowrap; }
+    .open-youtube svg { width: 16px; height: 16px; }
     .open-youtube:hover { background: #292d29; }
     .collapse-player { display: none; }
-    .player.expanded { z-index: 8; inset: 0; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto auto; align-content: center; gap: 28px; padding: clamp(24px, 7vw, 90px); border: 0; border-radius: 0; background: radial-gradient(ellipse at 50% 15%, #35432b, #101110 65%); }
-    .player.expanded .now-playing { flex-direction: column; justify-content: center; text-align: center; }
-    .player.expanded .now-playing .cover { flex: 0 0 auto; width: clamp(150px, 31vw, 250px); height: clamp(150px, 31vw, 250px); border-radius: 22px; font-size: clamp(48px, 10vw, 82px); box-shadow: 0 22px 70px #0008; }
-    .player.expanded .now-title { max-width: min(640px, 88vw); margin-top: 25px; font-size: clamp(22px, 4vw, 32px); }
+    .player.expanded { z-index: 8; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; max-height: none; padding: max(28px, env(safe-area-inset-top)) 24px max(28px, env(safe-area-inset-bottom)); border: 0; border-radius: 0; background: radial-gradient(ellipse at 50% 12%, #34472d, #111510 66%); overflow-y: auto; }
+    body.player-expanded { overflow: hidden; }
+    .player.expanded .player-top { width: min(520px, 100%); flex: 0 0 auto; flex-direction: column; gap: 18px; }
+    .player.expanded .now-playing { width: 100%; flex-direction: column; justify-content: center; gap: 11px; text-align: center; }
+    .player.expanded .now-playing .cover { flex: 0 0 auto; width: 104px; height: 104px; border-radius: 20px; box-shadow: 0 22px 70px #0008; }
+    .player.expanded .now-playing .cover svg { width: 38px; height: 38px; }
+    .player.expanded .now-copy { width: 100%; }
+    .player.expanded .now-title { max-width: min(640px, 88vw); margin: 0 0 6px; font-size: clamp(20px, 4vw, 28px); }
     .player.expanded .now-subtitle { font-size: 14px; }
-    .player.expanded .player-message { width: min(600px, 100%); margin: 0 auto; }
-    .player.expanded .player-message iframe { height: min(210px, 30vh); border-radius: 12px; }
+    .player.expanded .expand-icon { display: none; }
+    .player.expanded .player-controls { gap: 18px; }
+    .player.expanded .transport-button { width: 48px; height: 48px; }
+    .player.expanded .play-toggle { width: 62px; height: 62px; }
+    .player.expanded .player-progress { width: min(520px, 100%); flex: 0 0 auto; }
+    .player.expanded .player-message { width: min(520px, 100%); min-width: 200px; flex: 0 0 auto; }
+    .player.expanded #youtube-player, .player.expanded .player-message iframe { width: 100%; height: auto; min-height: 200px; border-radius: 14px; }
     .player.expanded .player-actions { justify-content: center; }
-    .player.expanded .collapse-player { position: fixed; top: max(18px, env(safe-area-inset-top)); right: max(18px, env(safe-area-inset-right)); z-index: 1; display: grid; width: 44px; height: 44px; border: 1px solid #ffffff33; background: #111a; color: #fff; font-size: 22px; }
+    .player.expanded .collapse-player { position: fixed; top: max(16px, env(safe-area-inset-top)); right: max(16px, env(safe-area-inset-right)); z-index: 1; display: grid; width: 46px; height: 46px; place-items: center; border: 1px solid #ffffff25; background: #111a; color: #fff; }
+    .player.expanded .collapse-player svg { width: 21px; height: 21px; }
     dialog { width: min(450px, calc(100% - 32px)); padding: 0; border: 1px solid #41463f; border-radius: 16px; background: #1b1e1b; color: #f5f5f2; box-shadow: 0 24px 80px #0009; }
     dialog::backdrop { background: #090a09bb; backdrop-filter: blur(4px); }
     .dialog-content { padding: 25px; }
@@ -131,12 +180,14 @@
     @media (max-width: 760px) {
       .app { display: block; }
       body { padding-bottom: calc(210px + env(safe-area-inset-bottom)); }
+      body.player-active { padding-bottom: calc(370px + env(safe-area-inset-bottom)); }
       .sidebar { display: block; padding: 15px 20px 5px; border-right: 0; border-bottom: 1px solid #292c29; }
       .brand { margin: 0; }
       .sidebar .nav-label, .sidebar-note { display: none; }
       .sidebar nav { position: fixed; z-index: 5; right: 0; bottom: 0; left: 0; display: flex; justify-content: space-around; gap: 4px; padding: 7px 8px max(7px, env(safe-area-inset-bottom)); border-top: 1px solid #343834; background: #151715f7; backdrop-filter: blur(16px); }
       .sidebar .nav-item { width: auto; min-width: 0; min-height: 49px; flex: 1; flex-direction: column; justify-content: center; gap: 3px; padding: 6px 4px; font-size: 11px; }
-      .sidebar .nav-item span:first-child { width: auto; font-size: 16px; }
+      .sidebar .nav-item span:first-child { width: auto; }
+      .sidebar .nav-item svg { width: 19px; height: 19px; }
       .nav-count { display: none; }
       main { padding: 22px 18px 34px; }
       .topbar { gap: 10px; margin-bottom: 25px; }
@@ -145,16 +196,27 @@
       .utility-button .button-icon { font-size: 18px; }
       .hero { min-height: 190px; padding: 27px 24px; }
       .hero-orbit { right: -40px; opacity: .35; }
-      .player { right: 9px; bottom: calc(70px + env(safe-area-inset-bottom)); left: 9px; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto; gap: 6px; min-height: 0; padding: 10px 12px; border: 1px solid #383d38; border-radius: 16px; box-shadow: 0 12px 34px #0008; }
-      .player-message { display: block; grid-column: 1 / -1; grid-row: 2; min-height: 64px; }
-      .player-actions { grid-column: 2; grid-row: 1; }
-      .player-actions:empty { display: none; }
-      .now-playing .cover { flex-basis: 40px; width: 40px; height: 40px; }
-      .player.expanded { top: 0; right: 0; bottom: 0; left: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto auto; align-content: center; gap: 24px; min-height: 100vh; min-height: 100dvh; padding: max(26px, env(safe-area-inset-top)) 22px max(26px, env(safe-area-inset-bottom)); border: 0; border-radius: 0; }
-      .player.expanded .now-playing .cover { width: min(58vw, 230px); height: min(58vw, 230px); }
-      .player.expanded .player-message { grid-column: 1; grid-row: 2; width: 100%; min-height: 0; }
-      .player.expanded .player-message iframe { height: min(190px, 25vh); }
-      .player.expanded .player-actions { grid-column: 1; grid-row: 3; }
+      .player { right: 9px; bottom: calc(70px + env(safe-area-inset-bottom)); left: 9px; flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 10px; max-height: calc(100dvh - 86px - env(safe-area-inset-bottom)); min-height: 0; padding: 11px 12px; border: 1px solid #383d38; border-radius: 20px; box-shadow: 0 16px 42px #0009; overflow-y: auto; }
+      .player.has-track { min-height: 0; padding: 11px 12px; }
+      .player-top { width: 100%; flex: 0 0 auto; gap: 8px; }
+      .now-playing { gap: 9px; }
+      .now-playing .cover { flex-basis: 43px; width: 43px; height: 43px; }
+      .now-title { font-size: 13px; }
+      .now-subtitle { font-size: 11px; }
+      .expand-icon { display: block; }
+      .player-controls { gap: 2px; }
+      .transport-button { width: 37px; height: 37px; }
+      .play-toggle { width: 43px; height: 43px; }
+      .player-progress { width: 100%; flex: 0 0 auto; gap: 7px; }
+      .player.has-track .player-message { width: 100%; min-width: 200px; flex: 0 0 auto; }
+      .player.has-track #youtube-player, .player.has-track .player-message iframe { width: 100%; min-width: 200px; min-height: 200px; aspect-ratio: 16 / 9; }
+      .player-actions { justify-content: flex-start; }
+      .player.expanded { top: 0; right: 0; bottom: 0; left: 0; align-items: center; justify-content: center; gap: 18px; max-height: none; min-height: 100vh; min-height: 100dvh; padding: max(28px, env(safe-area-inset-top)) 20px max(28px, env(safe-area-inset-bottom)); border: 0; border-radius: 0; overflow-y: auto; }
+      .player.expanded .player-top { width: min(520px, 100%); flex-direction: column; gap: 16px; }
+      .player.expanded .now-playing .cover { width: 96px; height: 96px; }
+      .player.expanded .player-message { width: min(520px, 100%); min-width: 200px; }
+      .player.expanded #youtube-player, .player.expanded .player-message iframe { width: 100%; min-width: 200px; min-height: 200px; aspect-ratio: 16 / 9; }
+      .player.expanded .player-actions { justify-content: center; }
     }
     @media (max-width: 450px) {
       .topbar { align-items: center; }
@@ -162,6 +224,7 @@
       .utility-button { width: 38px; min-height: 40px; }
       .add-button { width: 43px; padding: 0; overflow: hidden; font-size: 0; }
       .add-button span { font-size: 22px; }
+      .add-button span svg { width: 21px; height: 21px; }
       .add-button span + span { display: none; }
       .hero-orbit { display: none; }
       .track-row { grid-template-columns: 38px minmax(0, 1fr) 36px; gap: 10px; padding: 9px; }
@@ -177,13 +240,13 @@
 <body>
   <div class="app">
     <aside class="sidebar" aria-label="Navegación">
-      <div class="brand"><span class="brand-mark" aria-hidden="true">♫</span><span>ritmo</span></div>
+      <div class="brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><span>ritmo</span></div>
       <div>
         <p class="nav-label">Tu espacio</p>
         <nav aria-label="Secciones de la biblioteca">
-          <button class="nav-item active" type="button" data-kind="song" aria-current="page"><span aria-hidden="true">♫</span><span>Canciones</span><span class="nav-count" id="song-count">0</span></button>
-          <button class="nav-item" type="button" data-kind="album"><span aria-hidden="true">▣</span><span>Álbumes</span><span class="nav-count" id="album-count">0</span></button>
-          <button class="nav-item" type="button" data-kind="playlist"><span aria-hidden="true">☷</span><span>Listas</span><span class="nav-count" id="playlist-count">0</span></button>
+          <button class="nav-item active" type="button" data-kind="song" aria-current="page"><span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><span>Canciones</span><span class="nav-count" id="song-count">0</span></button>
+          <button class="nav-item" type="button" data-kind="album"><span aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v6"/></svg></span><span>Álbumes</span><span class="nav-count" id="album-count">0</span></button>
+          <button class="nav-item" type="button" data-kind="playlist"><span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/><path d="m17 16 4 2-4 2z"/></svg></span><span>Listas</span><span class="nav-count" id="playlist-count">0</span></button>
         </nav>
       </div>
       <p class="sidebar-note">Biblioteca guardada en este dispositivo. Exporta una copia para moverla a otro equipo.</p>
@@ -192,13 +255,13 @@
     <main>
       <div class="topbar">
         <label class="search-wrap">
-          <span aria-hidden="true">⌕</span>
+          <span aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></span>
           <input id="search" type="search" placeholder="Buscar en tu biblioteca" aria-label="Buscar en tu biblioteca">
         </label>
         <div class="topbar-actions">
-          <button class="utility-button" id="open-data-dialog" type="button" aria-label="Exportar o importar biblioteca"><span class="button-icon" aria-hidden="true">⇅</span><span>Datos</span></button>
-          <button class="utility-button" id="install-button" type="button"><span class="button-icon" aria-hidden="true">⌂</span><span>Instalar app</span></button>
-          <button class="add-button" id="open-dialog" type="button"><span aria-hidden="true">＋</span><span>Añadir enlace</span></button>
+          <button class="utility-button" id="open-data-dialog" type="button" aria-label="Exportar o importar biblioteca"><span class="button-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M5 16v4h14v-4"/></svg></span><span>Datos</span></button>
+          <button class="utility-button" id="install-button" type="button" aria-label="Instalar app"><span class="button-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M10 18h4"/></svg></span><span>Instalar app</span></button>
+          <button class="add-button" id="open-dialog" type="button"><span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span><span>Añadir enlace</span></button>
         </div>
       </div>
 
@@ -229,16 +292,35 @@
   </div>
 
   <footer class="player" id="player" aria-label="Reproductor">
-    <button class="now-playing" id="expand-player" type="button" aria-label="Ampliar reproductor" aria-expanded="false" disabled>
-      <div class="cover" aria-hidden="true">♫</div>
-      <div style="min-width:0">
-        <p class="now-title" id="now-title">Nada reproduciéndose</p>
-        <p class="now-subtitle" id="now-subtitle">Elige un enlace de tu biblioteca</p>
+    <div class="player-top">
+      <button class="now-playing" id="expand-player" type="button" aria-label="Ampliar reproductor" aria-expanded="false" disabled>
+        <div class="cover player-cover" id="player-cover" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
+        <span class="now-copy">
+          <span class="now-title" id="now-title">Nada reproduciéndose</span>
+          <span class="now-subtitle" id="now-subtitle">Elige un enlace de tu biblioteca</span>
+        </span>
+        <svg class="expand-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></svg>
+      </button>
+      <div class="player-controls" role="group" aria-label="Controles de reproducción">
+        <button class="transport-button secondary-transport" id="previous-track" type="button" aria-label="Anterior" disabled><svg viewBox="0 0 24 24"><path d="M5 5v14M19 6l-9 6 9 6z"/></svg></button>
+        <button class="transport-button play-toggle" id="toggle-play" type="button" aria-label="Reproducir" disabled>
+          <svg class="play-icon" viewBox="0 0 24 24"><path d="m8 5 12 7-12 7z"/></svg>
+          <svg class="pause-icon" viewBox="0 0 24 24" hidden><path d="M8 5h3v14H8zm5 0h3v14h-3z"/></svg>
+        </button>
+        <button class="transport-button secondary-transport" id="next-track" type="button" aria-label="Siguiente" disabled><svg viewBox="0 0 24 24"><path d="M19 5v14M5 6l9 6-9 6z"/></svg></button>
       </div>
-    </button>
-    <div class="player-message" id="player-message">La reproducción usa el reproductor oficial de YouTube.</div>
+    </div>
+    <div class="player-progress">
+      <span class="time-label" id="elapsed-time">0:00</span>
+      <input id="seek-slider" type="range" min="0" max="0" step="1" value="0" aria-label="Posición de reproducción" disabled>
+      <span class="time-label" id="duration-time">0:00</span>
+    </div>
+    <div class="player-message" id="player-message">
+      <div id="youtube-player"></div>
+      <p class="player-status" id="player-status" role="status" aria-live="polite"></p>
+    </div>
     <div class="player-actions" id="player-actions"></div>
-    <button class="icon-button collapse-player" id="collapse-player" type="button" aria-label="Cerrar reproductor ampliado">×</button>
+    <button class="icon-button collapse-player" id="collapse-player" type="button" aria-label="Cerrar reproductor ampliado"><svg viewBox="0 0 24 24"><path d="m18 6-12 12M6 6l12 12"/></svg></button>
   </footer>
 
   <dialog id="add-dialog" aria-labelledby="dialog-title">
@@ -314,7 +396,7 @@
         <button class="close-button" id="close-install-dialog" type="button" aria-label="Cerrar">×</button>
       </div>
       <p class="dialog-copy">En Android, usa “Instalar aplicación” o “Añadir a pantalla de inicio” en el menú del navegador. En iPhone, abre el menú Compartir de Safari y elige “Añadir a pantalla de inicio”. La instalación requiere conexión HTTPS.</p>
-      <p class="dialog-copy">La app guarda el catálogo y su reproductor; no descarga ni almacena audio. La continuidad con la pantalla apagada depende de YouTube, el navegador y tu cuenta.</p>
+      <p class="dialog-copy">Ritmo no descarga ni almacena audio y no puede forzar la reproducción en segundo plano. YouTube y el navegador deciden si continúa; Ritmo añade controles de pantalla bloqueada cuando el dispositivo los admite.</p>
       <div class="dialog-actions">
         <button class="secondary-button" id="close-install" type="button">Entendido</button>
       </div>
@@ -341,6 +423,43 @@
     let activeKind = "song";
     let currentTrackId = null;
     let deferredInstallPrompt = null;
+    let youtubePlayer = null;
+    let youtubeApiPromise = null;
+    let playerRequest = 0;
+    let playerReady = false;
+    let playerClock = null;
+
+    const ICON_CONTENT = {
+      music: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+      album: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/>',
+      playlist: '<path d="M4 6h16M4 12h16M4 18h10"/>',
+      play: '<path d="m8 5 12 7-12 7z"/>',
+      trash: '<path d="M3 6h18m-2 0-1 14H6L5 6m3 0V4h8v2m-7 4v7m4-7v7"/>',
+      external: '<path d="M14 4h6v6m0-6-9 9"/><path d="M18 13v6H5V6h6"/>'
+    };
+
+    function createIcon(name) {
+      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.setAttribute("viewBox", "0 0 24 24");
+      svg.setAttribute("aria-hidden", "true");
+      svg.innerHTML = ICON_CONTENT[name];
+      return svg;
+    }
+
+    function setTrackCover(element, track, eager = false) {
+      element.replaceChildren(createIcon(track.kind === "album" ? "album" : track.kind === "playlist" ? "playlist" : "music"));
+      const thumbnailUrl = track.thumbnailUrl || (track.videoId
+        ? `https://i.ytimg.com/vi/${encodeURIComponent(track.videoId)}/hqdefault.jpg`
+        : "");
+      if (!thumbnailUrl) return;
+      const image = document.createElement("img");
+      image.alt = "";
+      image.loading = eager ? "eager" : "lazy";
+      image.decoding = "async";
+      image.src = thumbnailUrl;
+      image.addEventListener("error", () => image.remove(), { once: true });
+      element.append(image);
+    }
 
     function inferKind(track) {
       if (typeof track.videoId === "string") return "song";
@@ -367,6 +486,7 @@
       if (!KINDS.includes(kind) || (kind !== "song" && !hasPlaylist) || (kind === "song" && !hasVideo)) {
         throw new Error("Hay un tipo de contenido incompatible con el enlace guardado.");
       }
+      const thumbnailUrl = normalizeThumbnailUrl(track.thumbnailUrl);
       return {
         id: track.id,
         title: track.title.trim(),
@@ -374,8 +494,21 @@
         kind,
         artist: typeof track.artist === "string" ? track.artist.trim() : "",
         album: typeof track.album === "string" ? track.album.trim() : "",
+        ...(thumbnailUrl ? { thumbnailUrl } : {}),
         ...(hasVideo ? { videoId: track.videoId } : { playlistId: track.playlistId })
       };
+    }
+
+    function normalizeThumbnailUrl(value) {
+      if (typeof value !== "string" || !value.trim()) return "";
+      try {
+        const url = new URL(value);
+        if (url.protocol !== "https:" || url.hostname !== "i.ytimg.com" ||
+            !/^\/vi\/[A-Za-z0-9_-]{11}\//.test(url.pathname)) return "";
+        return url.href;
+      } catch {
+        return "";
+      }
     }
 
     function loadTracks() {
@@ -459,6 +592,153 @@
       select.value = values.includes(previousValue) ? previousValue : "";
     }
 
+    function loadYouTubeApi() {
+      if (window.YT && window.YT.Player) return Promise.resolve(window.YT);
+      if (youtubeApiPromise) return youtubeApiPromise;
+      youtubeApiPromise = new Promise((resolve, reject) => {
+        const timeout = window.setTimeout(() => reject(new Error("YouTube tardó demasiado en cargar el reproductor.")), 20000);
+        const previousReady = window.onYouTubeIframeAPIReady;
+        const script = document.createElement("script");
+        script.src = "https://www.youtube.com/iframe_api";
+        script.async = true;
+        script.onerror = () => {
+          window.clearTimeout(timeout);
+          reject(new Error("No se pudo cargar el reproductor oficial de YouTube."));
+        };
+        window.onYouTubeIframeAPIReady = () => {
+          window.clearTimeout(timeout);
+          try {
+            if (typeof previousReady === "function") previousReady();
+          } catch (error) {
+            console.error("Falló el callback previo de YouTube IFrame API:", error);
+          }
+          resolve(window.YT);
+        };
+        document.head.append(script);
+      }).catch((error) => {
+        youtubeApiPromise = null;
+        throw error;
+      });
+      return youtubeApiPromise;
+    }
+
+    function setMediaAction(action, handler) {
+      if (typeof navigator.mediaSession.setActionHandler !== "function") return;
+      try {
+        navigator.mediaSession.setActionHandler(action, handler);
+      } catch (error) {
+        console.info(`El navegador no admite el control multimedia "${action}".`, error);
+      }
+    }
+
+    function updateMediaMetadata(track, videoData = null, playbackState = "none") {
+      if (!("mediaSession" in navigator) || !window.MediaMetadata) return;
+      const videoId = track.playlistId && videoData && /^[A-Za-z0-9_-]{11}$/.test(videoData.video_id || "")
+        ? videoData.video_id
+        : track.videoId;
+      const artwork = track.thumbnailUrl || (videoId
+        ? `https://i.ytimg.com/vi/${encodeURIComponent(videoId)}/hqdefault.jpg`
+        : new URL("./icons/icon-192.png", location.href).href);
+      navigator.mediaSession.metadata = new window.MediaMetadata({
+        title: track.playlistId && videoData && videoData.title ? videoData.title : track.title,
+        artist: track.artist || (videoData && videoData.author) || "YouTube Music",
+        album: track.album || (track.playlistId ? track.title : "Ritmo"),
+        artwork: [{ src: artwork, sizes: "192x192", type: artwork.endsWith(".png") ? "image/png" : "image/jpeg" }]
+      });
+      navigator.mediaSession.playbackState = playbackState;
+    }
+
+    function setPlaybackState(state) {
+      const playing = state === window.YT.PlayerState.PLAYING;
+      const paused = state === window.YT.PlayerState.PAUSED;
+      const playButton = document.querySelector("#toggle-play");
+      playButton.querySelector(".play-icon").toggleAttribute("hidden", playing);
+      playButton.querySelector(".pause-icon").toggleAttribute("hidden", !playing);
+      playButton.setAttribute("aria-label", playing ? "Pausar" : "Reproducir");
+      if ("mediaSession" in navigator) {
+        navigator.mediaSession.playbackState = playing ? "playing" : paused ? "paused" : "none";
+      }
+      if (playing) {
+        if (playerClock) window.clearInterval(playerClock);
+        playerClock = window.setInterval(updateProgress, 1000);
+      } else {
+        if (playerClock) window.clearInterval(playerClock);
+        playerClock = null;
+        updateProgress();
+      }
+    }
+
+    function formatTime(seconds) {
+      if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
+      const wholeSeconds = Math.floor(seconds);
+      return `${Math.floor(wholeSeconds / 60)}:${String(wholeSeconds % 60).padStart(2, "0")}`;
+    }
+
+    function updateProgress() {
+      if (!playerReady || !youtubePlayer) return;
+      const duration = Number(youtubePlayer.getDuration());
+      const position = Number(youtubePlayer.getCurrentTime());
+      if (!Number.isFinite(duration) || duration <= 0 || !Number.isFinite(position)) return;
+      const slider = document.querySelector("#seek-slider");
+      slider.max = String(Math.floor(duration));
+      slider.value = String(Math.min(Math.floor(position), Math.floor(duration)));
+      document.querySelector("#elapsed-time").textContent = formatTime(position);
+      document.querySelector("#duration-time").textContent = formatTime(duration);
+      if ("mediaSession" in navigator && typeof navigator.mediaSession.setPositionState === "function") {
+        try {
+          navigator.mediaSession.setPositionState({
+            duration,
+            playbackRate: Number(youtubePlayer.getPlaybackRate()) || 1,
+            position: Math.min(position, duration)
+          });
+        } catch (error) {
+          console.info("No se pudo actualizar la posición multimedia del sistema.", error);
+        }
+      }
+    }
+
+    function seekTo(seconds) {
+      if (!playerReady || !youtubePlayer || !Number.isFinite(seconds)) return;
+      const duration = Number(youtubePlayer.getDuration());
+      if (!Number.isFinite(duration) || duration <= 0) return;
+      youtubePlayer.seekTo(Math.min(Math.max(0, seconds), duration), true);
+      updateProgress();
+    }
+
+    function playAdjacentTrack(direction) {
+      const currentTrack = tracks.find((track) => track.id === currentTrackId);
+      if (!currentTrack) return;
+      if (currentTrack.playlistId && playerReady && youtubePlayer) {
+        if (direction > 0) youtubePlayer.nextVideo();
+        else youtubePlayer.previousVideo();
+        return;
+      }
+      const sameKind = tracks.filter((track) => track.kind === currentTrack.kind);
+      if (sameKind.length < 2) return;
+      const index = sameKind.findIndex((track) => track.id === currentTrackId);
+      const nextIndex = (index + direction + sameKind.length) % sameKind.length;
+      playTrack(sameKind[nextIndex]);
+    }
+
+    function registerMediaSessionActions() {
+      if (!("mediaSession" in navigator)) return;
+      setMediaAction("play", () => {
+        if (playerReady && youtubePlayer) youtubePlayer.playVideo();
+      });
+      setMediaAction("pause", () => {
+        if (playerReady && youtubePlayer) youtubePlayer.pauseVideo();
+      });
+      setMediaAction("previoustrack", () => playAdjacentTrack(-1));
+      setMediaAction("nexttrack", () => playAdjacentTrack(1));
+      setMediaAction("seekto", (details) => seekTo(details && details.seekTime));
+      setMediaAction("seekbackward", (details) => {
+        if (playerReady && youtubePlayer) seekTo(youtubePlayer.getCurrentTime() - ((details && details.seekOffset) || 10));
+      });
+      setMediaAction("seekforward", (details) => {
+        if (playerReady && youtubePlayer) seekTo(youtubePlayer.getCurrentTime() + ((details && details.seekOffset) || 10));
+      });
+    }
+
     function render() {
       const sectionTracks = tracks.filter((track) => track.kind === activeKind);
       const artistNames = [...new Set(sectionTracks.map((track) => track.artist).filter(Boolean))]
@@ -512,10 +792,11 @@
       for (const track of visibleTracks) {
         const row = document.createElement("div");
         row.className = "track-row";
+        if (track.id === currentTrackId) row.classList.add("is-current");
         const cover = document.createElement("div");
         cover.className = "cover";
         cover.setAttribute("aria-hidden", "true");
-        cover.textContent = track.kind === "album" ? "▣" : track.kind === "playlist" ? "☷" : "♫";
+        setTrackCover(cover, track);
         const info = document.createElement("div");
         info.className = "track-info";
         const title = document.createElement("p");
@@ -541,14 +822,14 @@
         playButton.type = "button";
         playButton.title = `Reproducir ${track.title}`;
         playButton.setAttribute("aria-label", `Reproducir ${track.title}`);
-        playButton.textContent = "▶";
+        playButton.append(createIcon("play"));
         playButton.addEventListener("click", () => playTrack(track));
         const removeButton = document.createElement("button");
         removeButton.className = "icon-button";
         removeButton.type = "button";
         removeButton.title = `Eliminar ${track.title}`;
         removeButton.setAttribute("aria-label", `Eliminar ${track.title}`);
-        removeButton.textContent = "×";
+        removeButton.append(createIcon("trash"));
         removeButton.addEventListener("click", () => removeTrack(track.id));
         actions.append(playButton, removeButton);
         row.append(cover, info, actions);
@@ -558,31 +839,119 @@
 
     function playTrack(track) {
       currentTrackId = track.id;
+      const request = ++playerRequest;
+      const playerElement = document.querySelector("#player");
+      playerElement.classList.add("has-track");
+      document.body.classList.add("player-active");
       document.querySelector("#now-title").textContent = track.title;
-      document.querySelector("#now-subtitle").textContent = "Reproduciendo desde YouTube";
+      document.querySelector("#now-subtitle").textContent = track.artist || "YouTube Music";
+      setTrackCover(document.querySelector("#player-cover"), track, true);
       const expandButton = document.querySelector("#expand-player");
       expandButton.disabled = false;
       expandButton.setAttribute("aria-label", `Ampliar reproductor: ${track.title}`);
-      const message = document.querySelector("#player-message");
-      const frame = document.createElement("iframe");
-      frame.title = `Reproductor de YouTube: ${track.title}`;
-      frame.src = track.playlistId
-        ? `https://www.youtube.com/embed/videoseries?list=${encodeURIComponent(track.playlistId)}&autoplay=1&rel=0`
-        : `https://www.youtube.com/embed/${encodeURIComponent(track.videoId)}?autoplay=1&rel=0`;
-      frame.allow = "autoplay; encrypted-media; picture-in-picture";
-      frame.referrerPolicy = "strict-origin-when-cross-origin";
-      frame.allowFullscreen = true;
-      frame.style.cssText = "width:100%;height:64px;border:0;border-radius:8px;background:#101110";
-      message.replaceChildren(frame);
+      document.querySelector("#previous-track").disabled = true;
+      document.querySelector("#next-track").disabled = true;
+      document.querySelector("#toggle-play").disabled = true;
+      document.querySelector("#seek-slider").disabled = true;
+      document.querySelector("#player-status").textContent = "Conectando con el reproductor oficial de YouTube…";
+      if (youtubePlayer) {
+        youtubePlayer.destroy();
+        youtubePlayer = null;
+      }
+      playerReady = false;
+      if (playerClock) window.clearInterval(playerClock);
+      playerClock = null;
+      const mount = document.createElement("div");
+      mount.id = "youtube-player";
+      document.querySelector("#player-message").replaceChildren(mount, document.querySelector("#player-status"));
       const openLink = document.createElement("a");
       openLink.className = "open-youtube";
       openLink.href = track.url;
       openLink.target = "_blank";
       openLink.rel = "noopener noreferrer";
-      openLink.textContent = "Abrir en YouTube ↗";
+      openLink.append(createIcon("external"), document.createTextNode("Abrir en YouTube"));
       document.querySelector("#player-actions").replaceChildren(openLink);
-      noticeElement.textContent = "Si el vídeo no se puede insertar, abre el enlace original en YouTube.";
+      updateMediaMetadata(track);
+      noticeElement.textContent = "Los controles de pantalla bloqueada aparecen si el navegador y YouTube los admiten.";
       render();
+      loadYouTubeApi().then((YT) => {
+        if (request !== playerRequest) return;
+        const playerVars = {
+          autoplay: 1,
+          controls: 1,
+          enablejsapi: 1,
+          playsinline: 1,
+          rel: 0,
+          fs: 1
+        };
+        if (location.protocol !== "file:") playerVars.origin = location.origin;
+        if (track.playlistId) {
+          playerVars.listType = "playlist";
+          playerVars.list = track.playlistId;
+        }
+        youtubePlayer = new YT.Player("youtube-player", {
+          width: "480",
+          height: "270",
+          ...(track.videoId ? { videoId: track.videoId } : {}),
+          playerVars,
+          events: {
+            onReady(event) {
+              if (request !== playerRequest) return;
+              playerReady = true;
+              const iframe = event.target.getIframe();
+              iframe.title = `Reproductor de YouTube: ${track.title}`;
+              iframe.allow = "autoplay; encrypted-media; picture-in-picture";
+              iframe.referrerPolicy = "strict-origin-when-cross-origin";
+              iframe.allowFullscreen = true;
+              const hasAdjacentTrack = track.playlistId || tracks.filter((item) => item.kind === track.kind).length > 1;
+              document.querySelector("#previous-track").disabled = !hasAdjacentTrack;
+              document.querySelector("#next-track").disabled = !hasAdjacentTrack;
+              document.querySelector("#toggle-play").disabled = false;
+              document.querySelector("#seek-slider").disabled = false;
+              document.querySelector("#player-status").textContent = "";
+              event.target.playVideo();
+              updateProgress();
+            },
+            onStateChange(event) {
+              if (request !== playerRequest) return;
+              const { PLAYING, PAUSED, ENDED } = YT.PlayerState;
+              if (event.data === PLAYING || event.data === PAUSED || event.data === ENDED) {
+                setPlaybackState(event.data);
+              }
+              if (event.data === PLAYING && typeof event.target.getVideoData === "function") {
+                const videoData = event.target.getVideoData();
+                updateMediaMetadata(track, videoData, "playing");
+                if (track.playlistId && videoData && videoData.title) {
+                  document.querySelector("#now-title").textContent = videoData.title;
+                  document.querySelector("#now-subtitle").textContent = videoData.author || track.title;
+                  if (/^[A-Za-z0-9_-]{11}$/.test(videoData.video_id || "")) {
+                    setTrackCover(document.querySelector("#player-cover"), { kind: "song", videoId: videoData.video_id }, true);
+                  }
+                }
+              }
+              if (event.data === ENDED && track.kind === "song") playAdjacentTrack(1);
+            },
+            onError(event) {
+              if (request !== playerRequest) return;
+              const message = event.data === 101 || event.data === 150
+                ? "Este vídeo no permite reproducción insertada. Ábrelo en YouTube."
+                : "YouTube no pudo reproducir este enlace. Ábrelo en YouTube para comprobarlo.";
+              document.querySelector("#player-status").textContent = message;
+              noticeElement.textContent = message;
+            },
+            onAutoplayBlocked() {
+              if (request !== playerRequest) return;
+              document.querySelector("#player-status").textContent = "Toca reproducir para iniciar el vídeo.";
+              document.querySelector("#toggle-play").disabled = false;
+            }
+          }
+        });
+      }).catch((error) => {
+        if (request !== playerRequest) return;
+        document.querySelector("#player-status").textContent = error.message;
+        noticeElement.textContent = error.message;
+        console.error("No se pudo iniciar el reproductor de YouTube:", error);
+      });
     }
 
     function removeTrack(id) {
@@ -595,15 +964,43 @@
       }
       if (currentTrackId === id) {
         currentTrackId = null;
-        document.querySelector("#player").classList.remove("expanded");
+        playerRequest++;
+        if (youtubePlayer) {
+          youtubePlayer.destroy();
+          youtubePlayer = null;
+        }
+        playerReady = false;
+        if (playerClock) window.clearInterval(playerClock);
+        playerClock = null;
+        const playerElement = document.querySelector("#player");
+        playerElement.classList.remove("expanded", "has-track");
+        document.body.classList.remove("player-active", "player-expanded");
         const expandButton = document.querySelector("#expand-player");
         expandButton.disabled = true;
         expandButton.setAttribute("aria-expanded", "false");
         expandButton.setAttribute("aria-label", "Ampliar reproductor");
+        document.querySelector("#previous-track").disabled = true;
+        document.querySelector("#next-track").disabled = true;
+        document.querySelector("#toggle-play").disabled = true;
+        document.querySelector("#toggle-play .play-icon").removeAttribute("hidden");
+        document.querySelector("#toggle-play .pause-icon").setAttribute("hidden", "");
+        document.querySelector("#seek-slider").disabled = true;
+        document.querySelector("#seek-slider").value = "0";
+        document.querySelector("#seek-slider").max = "0";
+        document.querySelector("#elapsed-time").textContent = "0:00";
+        document.querySelector("#duration-time").textContent = "0:00";
         document.querySelector("#now-title").textContent = "Nada reproduciéndose";
         document.querySelector("#now-subtitle").textContent = "Elige un enlace de tu biblioteca";
-        document.querySelector("#player-message").textContent = "La reproducción usa el reproductor oficial de YouTube.";
+        setTrackCover(document.querySelector("#player-cover"), { kind: "song" });
+        const mount = document.createElement("div");
+        mount.id = "youtube-player";
+        document.querySelector("#player-message").replaceChildren(mount, document.querySelector("#player-status"));
+        document.querySelector("#player-status").textContent = "";
         document.querySelector("#player-actions").replaceChildren();
+        if ("mediaSession" in navigator) {
+          navigator.mediaSession.metadata = null;
+          navigator.mediaSession.playbackState = "none";
+        }
       }
       noticeElement.textContent = "Elemento eliminado.";
       render();
@@ -792,14 +1189,32 @@
     });
     document.querySelector("#expand-player").addEventListener("click", () => {
       document.querySelector("#player").classList.add("expanded");
+      document.body.classList.add("player-expanded");
       document.querySelector("#expand-player").setAttribute("aria-expanded", "true");
       document.querySelector("#collapse-player").focus();
     });
     document.querySelector("#collapse-player").addEventListener("click", () => {
       document.querySelector("#player").classList.remove("expanded");
+      document.body.classList.remove("player-expanded");
       document.querySelector("#expand-player").setAttribute("aria-expanded", "false");
       document.querySelector("#expand-player").focus();
     });
+    document.querySelector("#toggle-play").addEventListener("click", () => {
+      if (!playerReady || !youtubePlayer) return;
+      if (youtubePlayer.getPlayerState() === window.YT.PlayerState.PLAYING) youtubePlayer.pauseVideo();
+      else youtubePlayer.playVideo();
+    });
+    document.querySelector("#previous-track").addEventListener("click", () => playAdjacentTrack(-1));
+    document.querySelector("#next-track").addEventListener("click", () => playAdjacentTrack(1));
+    document.querySelector("#seek-slider").addEventListener("change", (event) => {
+      seekTo(Number(event.currentTarget.value));
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && document.querySelector("#player").classList.contains("expanded")) {
+        document.querySelector("#collapse-player").click();
+      }
+    });
+    registerMediaSessionActions();
     searchInput.addEventListener("input", render);
     artistFilter.addEventListener("change", render);
     albumFilter.addEventListener("change", render);
@@ -869,6 +1284,7 @@
           kind,
           artist: document.querySelector("#track-artist").value,
           album: document.querySelector("#track-album").value,
+          ...(metadata && typeof metadata.thumbnail_url === "string" ? { thumbnailUrl: metadata.thumbnail_url } : {}),
           ...target
         });
         const previousTracks = tracks;
